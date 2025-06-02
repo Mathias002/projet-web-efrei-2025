@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
-import { Conversation } from '../../models/conversation.model';
-import { Message } from '../../models/message.model';
+import { Conversation } from '../../models/conversation';
+import { Message } from '../../models/message';
 import { ConversationsService } from './conversations.service';
 import { MessagesService } from '../messages/messages.service';
 import { CreateConversationInput } from './dto/create-conversation.input';

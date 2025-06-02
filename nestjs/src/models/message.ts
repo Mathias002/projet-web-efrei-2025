@@ -19,10 +19,6 @@ export class Message {
     @Field()
     conversationId: string;
 
-    
-
-    
-
     @Field(() => Conversation, { nullable: true })
     conversation?: Conversation;
 

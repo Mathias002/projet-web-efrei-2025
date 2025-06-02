@@ -1,8 +1,8 @@
 // src/health/health.controller.ts
 import { Controller, Get, Post } from '@nestjs/common';
 import { HealthService } from './health.service';
-import { QueueService } from '../queue/queue.service';
-import { MessageQueuePayload } from '../queue/interfaces/queue.interfaces';
+import { QueueService } from '../../queue/queue.service';
+import { MessageQueuePayload } from '../../queue/interfaces/queue.interfaces';
 
 // test de fonctionnement
 

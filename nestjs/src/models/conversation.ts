@@ -14,10 +14,10 @@ export class Conversation {
     messages?: Message[];
 
     @Field()
-    createdBy: Date;
+    createdBy: string;
 
     @Field()
-    createdAt?: Date;
+    createdAt: Date;
 
     @Field({ nullable: true })
     lastMessage?: Date;

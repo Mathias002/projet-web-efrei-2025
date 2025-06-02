@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
-import { Message } from '../../models/message.model';
+import { Message } from '../../models/message';
 import { SendMessageInput } from './dto/send-message.input';
 import { ConversationsService } from '../conversations/conversations.service';
 import { QueueService } from '../../queue/queue.service';
