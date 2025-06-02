@@ -1,6 +1,6 @@
 # compiled output
-projet-web-efrei-2025/dist
-projet-web-efrei-2025/node_modules
+nestjs/dist
+nestjs/node_modules
 /build
 
 # Logs
