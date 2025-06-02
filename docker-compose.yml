@@ -29,6 +29,19 @@ services:
     depends_on:
       - redis
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"     # Port AMQP pour les applis
+      - "15672:15672"   # Port interface web
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    networks:
+      - redis-network
+
 volumes:
   redis_data:
     driver: local
