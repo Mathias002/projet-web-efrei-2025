@@ -5,6 +5,10 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HealthModule } from './health/health.module';
+import { QueueModule } from './queue/queue.module';
+import { UsersModule } from './modules/users/user.module';
+import { ConversationsModule } from './modules/conversations/conversations.module';
+import { MessagesModule } from './modules/messages/messages.module';
 
 @Module({
   imports: [
@@ -14,8 +18,14 @@ import { HealthModule } from './health/health.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // Génère le schéma automatiquement
       playground: true, // Interface GraphQL Playground pour tester
       introspection: true, // Permet l'introspection du schéma
+      sortSchema: true, // Trie le schéma pour une meilleure lisibilité
     }),
     HealthModule, // Votre module health existant
+    QueueModule,
+    HealthModule,
+    UsersModule,
+    ConversationsModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
