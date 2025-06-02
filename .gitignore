@@ -2,6 +2,7 @@
 # compiled output
 nestjs/dist
 nestjs/node_modules
+nestjs/package-lock.json
 /build
 package-lock.json
 # Logs
