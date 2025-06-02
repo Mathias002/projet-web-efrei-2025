@@ -3,7 +3,7 @@
 nestjs/dist
 nestjs/node_modules
 /build
-
+package-lock.json
 # Logs
 logs
 *.log
