@@ -4,6 +4,8 @@ import { HealthService } from './health.service';
 import { QueueService } from '../queue/queue.service';
 import { MessageQueuePayload } from '../queue/interfaces/queue.interfaces';
 
+// test de fonctionnement
+
 @Controller('health')
 export class HealthController {
   constructor(

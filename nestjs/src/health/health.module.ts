@@ -6,6 +6,8 @@ import { QueueModule } from '../queue/queue.module';
 import { MessageConsumer } from '../consumers/message.consumer';
 import { ConversationConsumer } from '../consumers/conversation.consumer';
 
+// rassemble les composants
+
 @Module({
   imports: [QueueModule],
   controllers: [HealthController],

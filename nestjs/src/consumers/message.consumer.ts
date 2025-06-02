@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { MessageQueuePayload } from '../queue/interfaces/queue.interfaces';
 
+// traitement des messages
+
 @Injectable()
 export class MessageConsumer {
   private readonly logger = new Logger(MessageConsumer.name);

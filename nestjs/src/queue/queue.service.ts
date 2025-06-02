@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { MessageQueuePayload, ConversationQueuePayload } from './interfaces/queue.interfaces';
 
+// publication dans les files
+
 @Injectable()
 export class QueueService {
   private readonly logger = new Logger(QueueService.name);
