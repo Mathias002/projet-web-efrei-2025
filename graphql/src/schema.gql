@@ -1,0 +1,11 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type SimpleResponse {
+  result: String!
+}
+
+type Query {
+  getTest: SimpleResponse!
+}
