@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { UserService } from './users.service';
-import { UserResolver } from './users.resolver';
+import { UsersService } from '../users/users.service';
+import { UserResolver } from '../users.resolver';
 
 @Module({
     providers: [UsersService, UsersResolver],

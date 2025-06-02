@@ -1,7 +1,7 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import { MessagesResolver } from './messages.resolver';
-import { UsersModule } from '../users/users.module';
+import { UsersModule } from '../users/user.module';
 import { QueueModule } from '../../queue/queue.module';
 import { ConversationsModule } from '../conversations/conversations.module';
 
