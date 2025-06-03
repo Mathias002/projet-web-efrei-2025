@@ -25,7 +25,7 @@ export class HealthController {
       content: 'Test message from health controller',
       senderId: 'user-test',
       conversationId: 'conv-test',
-      timestamp: new Date(),
+      timestamp:  Date.now(),
     };
 
     try {

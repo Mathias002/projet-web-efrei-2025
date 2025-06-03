@@ -6,7 +6,7 @@ export interface MessageQueuePayload {
   content: string;
   senderId: string;
   conversationId: string;
-  timestamp: Date;
+  timestamp: number;
 }
 
 export interface ConversationQueuePayload {

@@ -5,11 +5,12 @@ import { HealthResolver } from './health.resolver';
 import { QueueModule } from '../../queue/queue.module';
 import { MessageConsumer } from '../../consumers/message.consumer';
 import { ConversationConsumer } from '../../consumers/conversation.consumer';
+import { MessagesModule } from '../../modules/messages/messages.module'
 
 // rassemble les composants
 
 @Module({
-  imports: [QueueModule],
+  imports: [QueueModule, MessagesModule],
   controllers: [HealthController],
   providers: [
     HealthService, 

@@ -14,12 +14,12 @@ export class ConversationsResolver {
 
     @Query(() => [Conversation])
     userConversations(@Args('userId') userId: string): Conversation[] {
-        return this.conversationsService.findByUserId('userId');
+        return this.conversationsService.findByUserId(userId);
     }
 
     @Query(() => Conversation, { nullable: true })
     conversation(@Args('id') id: string): Conversation | null {
-        return this.conversationsService.findById('id');
+        return this.conversationsService.findById(id);
     }
     
     @Mutation(() => Conversation)

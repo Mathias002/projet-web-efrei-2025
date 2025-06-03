@@ -54,7 +54,7 @@ export class MessagesService {
       content: message.content,
       senderId: message.senderId,
       conversationId: message.conversationId,
-      timestamp: message.createdAt,
+      timestamp: message.createdAt.getTime(),
     };
 
     await this.queueService.publishMessage(queuePayload);
@@ -69,9 +69,10 @@ export class MessagesService {
       content: messageData.content,
       senderId: messageData.senderId,
       conversationId: messageData.conversationId,
-      createdAt: messageData.timestamp,
+      createdAt: new Date(messageData.timestamp),
     };
 
+    //save bdd prisma 
     this.messages.push(message);
     return message;
   }

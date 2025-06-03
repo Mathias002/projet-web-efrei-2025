@@ -53,14 +53,14 @@ export class ConversationsService {
 
     this.conversations.push(conversation);
 
-    const queuePayload: ConversationQueuePayload = {
-      id: conversation.id,
-      participants: conversation.participants.map(p => p.id),
-      createdBy: conversation.createdBy,
-      timestamp: conversation.createdAt,
-    };
+    // const queuePayload: ConversationQueuePayload = {
+    //   id: conversation.id,
+    //   participants: conversation.participants.map(p => p.id),
+    //   createdBy: conversation.createdBy,
+    //   timestamp: conversation.createdAt,
+    // };
 
-    await this.queueService.publishConversation(queuePayload);
+    // await this.queueService.publishConversation(queuePayload);
     return conversation
   }
 
