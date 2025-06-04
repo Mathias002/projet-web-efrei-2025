@@ -4,6 +4,11 @@ import { Message } from '../../models/message';
 import { ConversationsService } from './conversations.service';
 import { MessagesService } from '../messages/messages.service';
 import { CreateConversationInput } from './dto/create-conversation.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/gql-auth.guard'; // Fix this path according to your project structure
+import { ClientCredentialsGuard } from 'src/auth/guards/client-credentials.guard'; // Fix this path according to your project structure 
+
+@UseGuards(ClientCredentialsGuard)
 
 @Resolver(() => Conversation)
 export class ConversationsResolver {
