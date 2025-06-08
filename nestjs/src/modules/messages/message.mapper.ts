@@ -8,5 +8,6 @@ export function mapToMessage(prismaMessage: PrismaMessage): GQLMessage {
     senderId: prismaMessage.senderId,
     conversationId: prismaMessage.conversationId,
     createdAt: prismaMessage.createdAt,
+    updatedAt: prismaMessage.updatedAt,
   };
 }

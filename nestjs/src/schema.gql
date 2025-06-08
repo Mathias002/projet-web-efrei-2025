@@ -26,6 +26,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input EditMessageInput {
+  messageId: String!
+  newContent: String!
+}
+
 type HealthCheckResponse {
   result: String!
   service: String!
@@ -40,12 +45,14 @@ type Message {
   id: ID!
   sender: User
   senderId: String!
+  updatedAt: DateTime!
 }
 
 type Mutation {
   createConversation(creatorId: String!, input: CreateConversationInput!): Conversation!
   createUser(input: CreateUserInput!): User!
   deleteUser(userId: String!): User!
+  editMessage(input: EditMessageInput!, userId: String!): Message!
   editUser(input: CreateUserInput!, userId: String!): User!
   sendMessage(input: SendMessageInput!): Message!
 }

@@ -3,6 +3,7 @@ import { Message } from '../../models/message';
 import { SendMessageInput } from './dto/send-message.input';
 import { PrismaService } from 'prisma/prisma.service';
 import { mapToMessage } from './message.mapper';
+import { EditMessageInput } from './dto/edit-message.input';
 
 @Injectable()
 export class MessagesService {
@@ -82,4 +83,34 @@ export class MessagesService {
 
     return mapToMessage(createdMessage);
   }
+
+   async editMessage(input: EditMessageInput, userId: string): Promise<Message> {
+
+    const message = await this.prisma.message.findUnique({
+      where: {
+        id: input.messageId
+      }
+    });
+
+    if(!message) {
+      throw new Error('Message not found.');
+    }
+
+    if(message.senderId !== userId) {
+      throw new Error('Unauthorized to edit this message.')
+    }
+
+    const updated = await this.prisma.message.update({
+      where: {
+        id: input.messageId,
+      },
+      data: {
+        content: input.newContent,
+      },
+    });
+
+    return mapToMessage(updated);
+
+  }
+
 }

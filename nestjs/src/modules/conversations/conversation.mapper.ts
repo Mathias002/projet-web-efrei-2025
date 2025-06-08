@@ -23,6 +23,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
       senderId: msg.senderId,
       conversationId: msg.conversationId,
       createdAt: msg.createdAt,
+      updatedAt: msg.updatedAt,
     })),
     createdBy: prismaConversation.createdBy,
     createdAt: prismaConversation.createdAt,

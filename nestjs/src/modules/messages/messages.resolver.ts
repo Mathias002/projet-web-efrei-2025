@@ -6,6 +6,7 @@ import { MessagesService } from './messages.service';
 import { UsersService } from '../users/users.service';
 import { ConversationsService } from '../conversations/conversations.service';
 import { SendMessageInput } from './dto/send-message.input';
+import { EditMessageInput } from './dto/edit-message.input';
 
 @Resolver(() => Message)
 export class MessagesResolver {
@@ -23,6 +24,14 @@ export class MessagesResolver {
     @Mutation(() => Message)
     async sendMessage(@Args('input') input: SendMessageInput): Promise<Message> {
         return this.messagesService.send(input);
+    }
+
+    @Mutation(() => Message)
+    async editMessage(
+        @Args('input') input: EditMessageInput,
+        @Args('userId') userId: string // à remplacer par @CurrentUser plus tard
+    ): Promise<Message> {
+        return this.messagesService.editMessage(input, userId);
     }
 
     @ResolveField(() => User, { nullable: true })
