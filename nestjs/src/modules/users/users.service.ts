@@ -12,7 +12,11 @@ constructor(
 ) {}
   
   async findAll() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      where: {
+        deleted: null,
+      }
+    });
 
     return users.map(mapUser);
   }
@@ -20,11 +24,16 @@ constructor(
   async findById(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { 
-        id: userId 
+        id: userId,
+        deleted: null,
       },  
     });
 
-     return user ? mapUser(user) : null;
+    if(!user) {
+      throw new Error('Sorry impossible to find this user.');
+    }
+
+   return user ? mapUser(user) : null;
   }
 
   async findByIds(userIds: string[]) {
@@ -32,9 +41,14 @@ constructor(
       where: {
         id: {
           in: userIds 
-        }
+        },
+        deleted: null,
       }
     });
+
+    if(users.length != userIds.length) {
+      throw new Error('Sorry impossible to find some of these users. Please try again.');
+    }
 
     return users.map(mapUser);
 
@@ -94,6 +108,30 @@ constructor(
     });
 
     return mapUser(editUser) ;
+
+  }
+
+  async deleteUser(userId: string) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        id: userId,
+      }
+    });
+
+    if(!existingUser) {
+      throw new Error('Sorry impossible to find this user.');
+    }
+
+    const deleteUser = await this.prisma.user.update ({
+      where: {
+        id: userId
+      },
+      data: {
+        deleted: new Date(),
+      }
+    });
+
+    return mapUser(deleteUser) ;
 
   }
 

@@ -15,6 +15,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
       email: link.user.email,
       createdAt: link.user.createdAt,
       updatedAt: link.user.updatedAt,
+      deleted: link.user.deleted,
     })),
     messages: prismaConversation.messages.map(msg => ({
       id: msg.id,

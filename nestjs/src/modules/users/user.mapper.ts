@@ -9,5 +9,6 @@ export function mapUser(prismaUser: PrismaUser): User {
     email: prismaUser.email,
     createdAt: prismaUser.createdAt,
     updatedAt: prismaUser.updatedAt,
+    deleted: prismaUser.deleted,
   };
 }

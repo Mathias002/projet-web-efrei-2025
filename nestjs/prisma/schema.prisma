@@ -13,6 +13,7 @@ model User {
   email                  String                     @unique
   createdAt              DateTime                   @default(now())
   updatedAt              DateTime                   @updatedAt
+  deleted                DateTime?
   messages               Message[]                  @relation("UserMessages")
   createdConversations   Conversation[]             @relation("CreatedBy")
   participantLinks       ConversationParticipant[]  // lien vers la table pivot
@@ -23,6 +24,7 @@ model Conversation {
   createdBy       String
   createdAt       DateTime                  @default(now())
   lastMessage     DateTime?
+  deleted         DateTime?
   messages        Message[]
   creator         User                      @relation("CreatedBy", fields: [createdBy], references: [id])
   participantLinks ConversationParticipant[] // lien vers la table pivot
@@ -34,6 +36,7 @@ model Message {
   senderId       String
   conversationId String
   createdAt      DateTime     @default(now())
+  deleted        DateTime?
   sender         User         @relation("UserMessages", fields: [senderId], references: [id])
   conversation   Conversation @relation(fields: [conversationId], references: [id])
 }
