@@ -1,38 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../models/user';
+import { PrismaService } from 'prisma/prisma.service'; 
+import { CreateUserInput } from './dto/create-user.input';
+import { mapUser } from './user.mapper'
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [
-    {
-      id: '1',
-      username: 'test 1',
-      email: 'test1@test1.com',
-      createdAt: new Date('2024-01-01'),
-    },
-    {
-      id: '2',
-      username: 'test 2',
-      email: 'test2@test2.com',
-      createdAt: new Date('2024-01-02'),
-    },
-    {
-      id: '3',
-      username: 'test 3',
-      email: 'test3@test3.com',
-      createdAt: new Date('2024-01-03'),
-    },
-  ];
+constructor(
+  private readonly prisma: PrismaService,
+) {}
+  
+  async findAll() {
+    const users = await this.prisma.user.findMany();
 
-  findAll(): User[] {
-    return this.users;
+    return users.map(mapUser);
   }
 
-  findById(id: string): User | null {
-    return this.users.find(user => user.id === id) || null;
+  async findById(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { 
+        id: userId 
+      },  
+    });
+
+     return user ? mapUser(user) : null;
   }
 
-  findByIds(ids: string[]): User[] | null {
-    return this.users.filter(user => ids.includes(user.id));
+  async findByIds(userIds: string[]) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: userIds 
+        }
+      }
+    });
+
+    return users.map(mapUser);
+
+  }
+
+  async createUser(input: CreateUserInput) {
+    const existing = await this.prisma.user.findFirst({
+      where: {
+        email: input.email,
+      }
+    });
+
+    if(existing) {
+      throw new Error('A user with the same email adress already exist.');
+    }
+
+    const createdUser = await this.prisma.user.create({
+      data: {
+        username: input.username,
+        email: input.email
+      },
+    });
+
+    return mapUser(createdUser) ;
+
   }
 }

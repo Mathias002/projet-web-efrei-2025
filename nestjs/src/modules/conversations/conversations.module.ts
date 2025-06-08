@@ -4,11 +4,13 @@ import { ConversationsResolver } from './conversations.resolver';
 import { UsersModule } from '../users/user.module';
 import { QueueModule } from '../../queue/queue.module';
 import { MessagesModule } from '../messages/messages.module';
+import { PrismaModule } from 'prisma/prisma.module';
 
 @Module({
     imports: [
         UsersModule, 
         QueueModule, 
+        PrismaModule,
         forwardRef(() => MessagesModule)
     ],
     providers: [ConversationsService, ConversationsResolver],

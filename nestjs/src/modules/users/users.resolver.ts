@@ -1,18 +1,35 @@
-import { Resolver, Query, Args } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { User } from '../../models/user';
 import { UsersService } from './users.service';
+import { CreateUserInput } from './dto/create-user.input';
 
 @Resolver(() => User )
 export class UsersResolver {
     constructor(private readonly usersService: UsersService) {}
 
     @Query(() => [User])
-    users(): User[]{
+    async users(): Promise<User[]> {
         return this.usersService.findAll();
     }
 
-    @Query(() => User, {nullable: true})
-    user(@Args('id') id: string): User | null{
+    @Query(() => User)
+    async user(
+        @Args('id') id: string
+    ): Promise<User| null>  {
         return this.usersService.findById(id);
+    }
+
+    @Query(() => User)
+    async usersByIds(
+        @Args('ids', { type: () => [String] }) ids: string[]
+    ): Promise<User[]> {
+        return this.usersService.findByIds(ids);
+    }
+
+    @Mutation(() => User)
+    async createUser(
+            @Args('input') input: CreateUserInput,
+        ): Promise<User> {
+        return this.usersService.createUser(input);
     }
 }

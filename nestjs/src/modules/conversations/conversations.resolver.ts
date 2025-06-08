@@ -13,26 +13,29 @@ export class ConversationsResolver {
     ) {}
 
     @Query(() => [Conversation])
-    userConversations(@Args('userId') userId: string): Conversation[] {
-        return this.conversationsService.findByUserId(userId);
-    }
-
-    @Query(() => Conversation, { nullable: true })
-    conversation(@Args('id') id: string): Conversation | null {
-        return this.conversationsService.findById(id);
+    async userConversations(
+        @Args('userId') userId: string,
+    ): Promise<Conversation[]> {
+        return this.conversationsService.findByUserId(userId)
     }
     
+    @Query(() => Conversation, { nullable: true })
+    async conversation(
+        @Args('id') id: string,
+    ): Promise<Conversation | null> {
+        return this.conversationsService.findById(id)
+    }
+
     @Mutation(() => Conversation)
     async createConversation(
         @Args('input') input: CreateConversationInput,
-        @Args('creatorId') creatorId: string, // Temporaire, plus tard via auth
+        @Args('creatorId') creatorId: string,
     ): Promise<Conversation> {
         return this.conversationsService.create(input, creatorId);
     }
 
     @ResolveField(() => [Message])
-    messages(@Parent() conversation: Conversation): Message[] {
+    async messages(@Parent() conversation: Conversation): Promise<Message[]> {
         return this.messagesService.findByConversationId(conversation.id);
     }
-
 }

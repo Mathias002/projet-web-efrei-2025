@@ -12,8 +12,13 @@ type Conversation {
 }
 
 input CreateConversationInput {
-  initialMessage: String!
+  initialMessage: String
   participantId: String!
+}
+
+input CreateUserInput {
+  email: String
+  username: String!
 }
 
 """
@@ -39,6 +44,7 @@ type Message {
 
 type Mutation {
   createConversation(creatorId: String!, input: CreateConversationInput!): Conversation!
+  createUser(input: CreateUserInput!): User!
   sendMessage(input: SendMessageInput!): Message!
 }
 
@@ -46,9 +52,10 @@ type Query {
   conversation(id: String!): Conversation
   conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
-  user(id: String!): User
+  user(id: String!): User!
   userConversations(userId: String!): [Conversation!]!
   users: [User!]!
+  usersByIds(ids: [String!]!): User!
 }
 
 input SendMessageInput {

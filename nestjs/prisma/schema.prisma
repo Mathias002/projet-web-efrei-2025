@@ -44,5 +44,5 @@ model ConversationParticipant {
   user           User         @relation(fields: [userId], references: [id])
   conversation   Conversation @relation(fields: [conversationId], references: [id])
 
-  @@id([userId, conversationId]) // composite primary key
+  @@id([userId, conversationId]) // clé primaire 
 }

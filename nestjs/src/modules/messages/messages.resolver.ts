@@ -16,7 +16,7 @@ export class MessagesResolver {
     ) {}
 
     @Query(() => [Message])
-    conversationMessages(@Args('conversationId') conversationId: string): Message[] {
+    async conversationMessages(@Args('conversationId') conversationId: string): Promise<Message[]> {
         return this.messagesService.findByConversationId(conversationId);
     }
 
@@ -26,12 +26,12 @@ export class MessagesResolver {
     }
 
     @ResolveField(() => User, { nullable: true })
-    sender(@Parent() message: Message): User | null {
+    async sender(@Parent() message: Message): Promise<User | null> {
         return this.usersService.findById(message.senderId);
     }
 
     @ResolveField(() => Conversation, { nullable: true })
-    conversation(@Parent() message: Message): Conversation | null {
+    async conversation(@Parent() message: Message): Promise<Conversation | null> {
         return this.conversationsService.findById(message.conversationId);
     }
 }
