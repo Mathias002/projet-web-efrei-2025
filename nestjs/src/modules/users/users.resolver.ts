@@ -32,4 +32,13 @@ export class UsersResolver {
         ): Promise<User> {
         return this.usersService.createUser(input);
     }
+    
+    @Mutation(() => User)
+    async editUser(
+            @Args('userId') userId: string,
+            @Args('input') input: CreateUserInput,
+        ): Promise<User> {
+        return this.usersService.editUser(userId, input);
+    }
+
 }

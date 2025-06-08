@@ -3,6 +3,7 @@ import { User } from '../../models/user';
 import { PrismaService } from 'prisma/prisma.service'; 
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
+import { EditUserInput } from './dto/edit-user.input';
 
 @Injectable()
 export class UsersService {
@@ -60,4 +61,40 @@ constructor(
     return mapUser(createdUser) ;
 
   }
+
+   async editUser(userId: string, input: EditUserInput) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: {
+        id: userId,
+      }
+    });
+
+    if(!existingUser) {
+      throw new Error('Sorry impossible to find this user.');
+    }
+
+    const existingEmail = await this.prisma.user.findFirst({
+      where: {
+        email: input.email,
+      }
+    });
+
+    if(existingEmail) {
+      throw new Error('A user with the same email adress already exist.');
+    }
+
+    const editUser = await this.prisma.user.update ({
+      where: {
+        id: userId
+      },
+      data: {
+        username: input.username,
+        email: input.email
+      },
+    });
+
+    return mapUser(editUser) ;
+
+  }
+
 }

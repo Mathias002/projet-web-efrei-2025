@@ -8,5 +8,6 @@ export function mapUser(prismaUser: PrismaUser): User {
     username: prismaUser.username,
     email: prismaUser.email,
     createdAt: prismaUser.createdAt,
+    updatedAt: prismaUser.updatedAt,
   };
 }
