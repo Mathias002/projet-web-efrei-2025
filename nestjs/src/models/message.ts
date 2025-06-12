@@ -1,6 +1,6 @@
-import {ObjectType, Field, ID} from '@nestjs/graphql';
-import {User} from './user';
-import {Conversation} from './conversation';
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { User } from './user';
+import { Conversation } from './conversation';
 
 @ObjectType()
 export class Message {
@@ -13,7 +13,7 @@ export class Message {
     @Field()
     senderId: string;
 
-    @Field(()=> User, { nullable: true })
+    @Field(() => User, { nullable: true })
     sender?: User;
 
     @Field()
@@ -24,6 +24,9 @@ export class Message {
 
     @Field()
     createdAt: Date;
+
+    @Field(() => Date, { nullable: true })
+    deleted?: Date | null;
 
     @Field()
     updatedAt: Date;

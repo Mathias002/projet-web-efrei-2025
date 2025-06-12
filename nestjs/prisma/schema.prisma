@@ -8,25 +8,25 @@ datasource db {
 }
 
 model User {
-  id                     String                     @id @default(uuid())
-  username               String
-  email                  String                     @unique
-  createdAt              DateTime                   @default(now())
-  updatedAt              DateTime                   @updatedAt
-  deleted                DateTime?
-  messages               Message[]                  @relation("UserMessages")
-  createdConversations   Conversation[]             @relation("CreatedBy")
-  participantLinks       ConversationParticipant[]  // lien vers la table pivot
+  id                   String                    @id @default(uuid())
+  username             String
+  email                String                    @unique
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  deleted              DateTime?
+  messages             Message[]                 @relation("UserMessages")
+  createdConversations Conversation[]            @relation("CreatedBy")
+  participantLinks     ConversationParticipant[] // lien vers la table pivot
 }
 
 model Conversation {
-  id              String                    @id @default(uuid())
-  createdBy       String
-  createdAt       DateTime                  @default(now())
-  lastMessage     DateTime?
-  deleted         DateTime?
-  messages        Message[]
-  creator         User                      @relation("CreatedBy", fields: [createdBy], references: [id])
+  id               String                    @id @default(uuid())
+  createdBy        String
+  createdAt        DateTime                  @default(now())
+  lastMessage      DateTime?
+  deleted          DateTime?
+  messages         Message[]
+  creator          User                      @relation("CreatedBy", fields: [createdBy], references: [id])
   participantLinks ConversationParticipant[] // lien vers la table pivot
 }
 
@@ -46,8 +46,8 @@ model ConversationParticipant {
   userId         String
   conversationId String
 
-  user           User         @relation(fields: [userId], references: [id])
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  user         User         @relation(fields: [userId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id])
 
   @@id([userId, conversationId]) // clé primaire 
 }

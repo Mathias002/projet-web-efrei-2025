@@ -42,6 +42,7 @@ type Message {
   conversation: Conversation
   conversationId: String!
   createdAt: DateTime!
+  deleted: DateTime
   id: ID!
   sender: User
   senderId: String!
@@ -51,6 +52,7 @@ type Message {
 type Mutation {
   createConversation(creatorId: String!, input: CreateConversationInput!): Conversation!
   createUser(input: CreateUserInput!): User!
+  deleteMessage(messageId: String!, userId: String!): Message!
   deleteUser(userId: String!): User!
   editMessage(input: EditMessageInput!, userId: String!): Message!
   editUser(input: CreateUserInput!, userId: String!): User!

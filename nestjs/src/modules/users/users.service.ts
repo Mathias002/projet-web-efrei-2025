@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { User } from '../../models/user';
-import { PrismaService } from 'prisma/prisma.service'; 
+import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
 import { EditUserInput } from './dto/edit-user.input';
 
 @Injectable()
 export class UsersService {
-constructor(
-  private readonly prisma: PrismaService,
-) {}
-  
+  constructor(
+    private readonly prisma: PrismaService,
+  ) { }
+
   async findAll() {
     const users = await this.prisma.user.findMany({
       where: {
@@ -23,34 +23,35 @@ constructor(
 
   async findById(userId: string) {
     const user = await this.prisma.user.findUnique({
-      where: { 
+      where: {
         id: userId,
-        deleted: null,
-      },  
+      },
     });
 
-    if(!user) {
+    if (!user) {
       throw new Error('Sorry impossible to find this user.');
     }
 
-   return user ? mapUser(user) : null;
+    return user ? mapUser(user) : null;
   }
 
   async findByIds(userIds: string[]) {
     const users = await this.prisma.user.findMany({
       where: {
         id: {
-          in: userIds 
+          in: userIds
         },
         deleted: null,
       }
     });
 
-    if(users.length != userIds.length) {
+    if (users.length != userIds.length) {
       throw new Error('Sorry impossible to find some of these users. Please try again.');
     }
 
-    return users.map(mapUser);
+    // console.log(users);
+
+    return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
 
   }
 
@@ -61,7 +62,7 @@ constructor(
       }
     });
 
-    if(existing) {
+    if (existing) {
       throw new Error('A user with the same email adress already exist.');
     }
 
@@ -72,18 +73,18 @@ constructor(
       },
     });
 
-    return mapUser(createdUser) ;
+    return mapUser(createdUser);
 
   }
 
-   async editUser(userId: string, input: EditUserInput) {
+  async editUser(userId: string, input: EditUserInput) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
         id: userId,
       }
     });
 
-    if(!existingUser) {
+    if (!existingUser) {
       throw new Error('Sorry impossible to find this user.');
     }
 
@@ -93,11 +94,11 @@ constructor(
       }
     });
 
-    if(existingEmail) {
+    if (existingEmail) {
       throw new Error('A user with the same email adress already exist.');
     }
 
-    const editUser = await this.prisma.user.update ({
+    const editUser = await this.prisma.user.update({
       where: {
         id: userId
       },
@@ -107,7 +108,7 @@ constructor(
       },
     });
 
-    return mapUser(editUser) ;
+    return mapUser(editUser);
 
   }
 
@@ -118,11 +119,11 @@ constructor(
       }
     });
 
-    if(!existingUser) {
+    if (!existingUser) {
       throw new Error('Sorry impossible to find this user.');
     }
 
-    const deleteUser = await this.prisma.user.update ({
+    const deleteUser = await this.prisma.user.update({
       where: {
         id: userId
       },
@@ -131,7 +132,7 @@ constructor(
       }
     });
 
-    return mapUser(deleteUser) ;
+    return mapUser(deleteUser);
 
   }
 
