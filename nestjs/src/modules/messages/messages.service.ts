@@ -15,7 +15,8 @@ export class MessagesService {
   async findByConversationId(conversationId: string): Promise<Message[]> {
     const rawMessages = await this.prisma.message.findMany({
       where: {
-        conversationId: conversationId
+        conversationId: conversationId,
+        deleted: null
       },
       orderBy: {
         createdAt: 'asc'
@@ -84,7 +85,7 @@ export class MessagesService {
     return mapToMessage(createdMessage);
   }
 
-   async editMessage(input: EditMessageInput, userId: string): Promise<Message> {
+  async editMessage(input: EditMessageInput, userId: string): Promise<Message> {
 
     const message = await this.prisma.message.findUnique({
       where: {
@@ -110,6 +111,35 @@ export class MessagesService {
     });
 
     return mapToMessage(updated);
+
+  }
+
+  async deleteMessage(messageId: string, userId: string) {
+
+    const message = await this.prisma.message.findUnique({
+      where: {
+        id: messageId
+      }
+    });
+
+    if(!message) {
+      throw new Error('Message not found.');
+    }
+
+    if(message.senderId !== userId) { // replace userId by auth 
+      throw new Error('Unauthorized to delete this message.')
+    }
+
+    const deleted = await this.prisma.message.update({
+      where: {
+        id: messageId,
+      },
+      data: {
+        deleted: new Date(),
+      },
+    });
+
+    return mapToMessage(deleted);
 
   }
 
