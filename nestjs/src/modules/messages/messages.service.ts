@@ -4,12 +4,15 @@ import { SendMessageInput } from './dto/send-message.input';
 import { PrismaService } from 'prisma/prisma.service';
 import { mapToMessage } from './message.mapper';
 import { EditMessageInput } from './dto/edit-message.input';
+import { MessageQueuePayload } from 'src/queue/interfaces/queue.interfaces';
+import { QueueService } from 'src/queue/queue.service';
 
 @Injectable()
 export class MessagesService {
 
   constructor(
     private readonly prisma: PrismaService,
+    private readonly queueService: QueueService,
   ) {}
 
   async findByConversationId(conversationId: string): Promise<Message[]> {
@@ -35,9 +38,42 @@ export class MessagesService {
   }
 
   async send(input: SendMessageInput): Promise<Message> {
+    
+    // validation sur l'auth du user
+
+    /**
+     * creation d'un id temporaire pour le passage dans la queue 
+     * qui sera remplacé par un id prisma une fois ajouté en bdd
+    */
+    const tempId = `msg-${Date.now()}`;
+
+    const payload: MessageQueuePayload = {
+      tempId,
+      content: input.content,
+      senderId: input.senderId,
+      conversationId: input.conversationId,
+      timestamp: new Date(),
+    };
+
+    await this.queueService.publishMessage(payload);
+
+    return {
+      id: tempId,
+      content: payload.content,
+      senderId: payload.senderId,
+      conversationId: payload.conversationId,
+      createdAt: payload.timestamp,
+      updatedAt: payload.timestamp,
+      deleted: null,
+    };
+
+  }
+
+  async handleQueueMessage(payload: MessageQueuePayload): Promise <Message> {
+    
     // On vérifie que la conversation existe
     const conversation = await this.prisma.conversation.findUnique({
-      where: { id: input.conversationId },
+      where: { id: payload.conversationId },
       include: {
         participantLinks: true
       }
@@ -49,7 +85,7 @@ export class MessagesService {
 
     // On vérifie que l'expéditeur existe
     const sender = await this.prisma.user.findUnique({
-      where: { id: input.senderId }
+      where: { id: payload.senderId }
     });
 
     if (!sender) {
@@ -58,7 +94,7 @@ export class MessagesService {
 
     // On vérifier que l'expéditeur fait partie de la conversation
     const isParticipant = conversation.participantLinks.some(
-      link => link.userId === input.senderId
+      link => link.userId === payload.senderId
     );
     
     if (!isParticipant) {
@@ -68,15 +104,15 @@ export class MessagesService {
     // Créer le message
     const createdMessage = await this.prisma.message.create({
       data: {
-        content: input.content,
-        senderId: input.senderId,
-        conversationId: input.conversationId,
+        content: payload.content,
+        senderId: payload.senderId,
+        conversationId: payload.conversationId,
       },
     });
 
     // On Met à jour la conversation avec la date du dernier message
     await this.prisma.conversation.update({
-      where: { id: input.conversationId },
+      where: { id: payload.conversationId },
       data: {
         lastMessage: createdMessage.createdAt
       }

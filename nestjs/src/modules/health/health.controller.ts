@@ -20,12 +20,13 @@ export class HealthController {
 
   @Post('test-queue')
   async testQueue(): Promise<{ message: string; jobId: string }> {
+    const tempId = `msg-${Date.now()}`;
     const testMessage: MessageQueuePayload = {
-      id: `test-${Date.now()}`,
+      tempId: tempId,
       content: 'Test message from health controller',
       senderId: 'user-test',
       conversationId: 'conv-test',
-      timestamp:  Date.now(),
+      timestamp:  new Date(),
     };
 
     try {
@@ -33,7 +34,7 @@ export class HealthController {
       
       return {
         message: 'Message successfully sent to RabbitMQ queue',
-        jobId: testMessage.id,
+        jobId: tempId,
       };
     } catch (error) {
       throw new Error(`Failed to send message to queue: ${error.message}`);
