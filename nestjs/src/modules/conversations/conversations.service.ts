@@ -3,65 +3,130 @@ import { Conversation } from '../../models/conversation';
 import { ConversationQueuePayload } from '../../queue/interfaces/queue.interfaces';
 import { UsersService } from '../users/users.service';
 import { CreateConversationInput } from './dto/create-conversation.input';
-import { QueueService } from '../../queue/queue.service'
+import { QueueService } from '../../queue/queue.service';
+import { PrismaService } from 'prisma/prisma.service';
+import { mapToConversation } from './conversation.mapper';
 
 @Injectable()
 export class ConversationsService {
-  private conversations: Conversation[] = [];
 
   constructor(
-    private readonly usersService: UsersService,
-    private readonly queueService: QueueService,
-  ) { }
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findByUserId(userId: string): Conversation[] {
-    return this.conversations
-      .filter(conversation => conversation.participants
-      .some(participant => participant.id === userId))
+  async findByUserId(userId: string) {
+    const rawConversations = await this.prisma.conversation.findMany({
+      where: {
+        participantLinks: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      include: {
+        participantLinks: {
+          include: {
+            user: true
+          }
+        },
+        messages: true,
+      },
+    });
+
+    return rawConversations.map(mapToConversation);
+
   }
 
-  findById(id: string): Conversation | null {
-    return this.conversations.find(conversation => conversation.id === id) || null;
+  async findById(id: string) {
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id },
+      include: {
+        participantLinks: {
+          include: {
+            user: true
+          }
+        },
+        messages: true,
+      },
+    });
+
+    return conversation ? mapToConversation(conversation) : null;
+
   }
 
-  async create(input: CreateConversationInput, creatorId: string): Promise<Conversation> {
-    const creator = this.usersService.findById(creatorId);
-    const participant = this.usersService.findById(input.participantId);
+  async create(input: CreateConversationInput, creatorId: string) {
+    const creator = await this.prisma.user.findUnique({where: { id: creatorId } });
+    const participant = await this.prisma.user.findUnique({where: { id: input.participantId } });
 
-    if (!creator || !participant) {
-      throw new Error('Creator or participant not found.');
+    if(!creator || !participant) {
+      throw new Error('Creator or participant not found');
     }
 
-    const existingConversation = this.conversations.find(
-      conv => conv.participants.length === 2 && conv.participants.some(
-        participant => participant.id === creatorId) && conv.participants.some(
-          participant => participant.id === input.participantId
-        )
-    )
+    // On vérifie si la conversation existe déjà
+    const existing = await this.prisma.conversation.findFirst({
+      where : {
+        participantLinks: {
+          every: {
+            userId: {
+              in: [creatorId, input.participantId],
+            },
+          },
+        },
+      },
+      include: {
+        participantLinks: {
+          include: {
+            user: true
+          }
+        },
+        messages: true,
+      },
+    });
 
-    if (existingConversation) {
-      return existingConversation;
+    // si la conversation existe déjà on la return
+    if(existing) return mapToConversation(existing);
+    
+    const conversation = await this.prisma.conversation.create({
+      data: {
+        createdBy: creatorId,
+        createdAt: new Date(),
+      },
+    });
+
+    if(input.initialMessage?.trim()) {
+      await this.prisma.message.create({
+        data: {
+          content: input.initialMessage,
+          senderId: creatorId,
+          conversationId: conversation.id,
+        }
+      });
     }
 
-    const conversation: Conversation = {
-      id: `conv-${Date.now()}`,
-      participants: [creator, participant],
-      messages: [],
-      createdBy: creatorId,
-      createdAt: new Date(),
-    };
+    await this.prisma.conversationParticipant.createMany({
+      data: [
+        { userId: creatorId, conversationId: conversation.id },
+        { userId: input.participantId, conversationId: conversation.id},
+      ],
+    });
 
-    this.conversations.push(conversation);
+    const fullConversation = await this.prisma.conversation.findUnique({
+      where: { id: conversation.id },
+      include: {
+        participantLinks: {
+          include: {
+            user: true,
+          }
+        },
+        messages: true,
+      },
+    });
 
-    // const queuePayload: ConversationQueuePayload = {
-    //   id: conversation.id,
-    //   participants: conversation.participants.map(p => p.id),
-    //   createdBy: conversation.createdBy,
-    //   timestamp: conversation.createdAt,
-    // };
+    if (!fullConversation) {
+      throw new Error('Failed to load the created conversation.');
+    }
 
-    // await this.queueService.publishConversation(queuePayload);
-    return conversation
+    return mapToConversation(fullConversation);
+
   }
-
 }

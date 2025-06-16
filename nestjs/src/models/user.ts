@@ -13,4 +13,10 @@ export class User {
 
     @Field()
     createdAt: Date;
+
+    @Field()
+    updatedAt: Date;
+
+    @Field(() => Date, { nullable: true })
+    deleted?: Date | null;
 }

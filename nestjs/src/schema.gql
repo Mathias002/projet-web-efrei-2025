@@ -12,14 +12,24 @@ type Conversation {
 }
 
 input CreateConversationInput {
-  initialMessage: String!
+  initialMessage: String
   participantId: String!
+}
+
+input CreateUserInput {
+  email: String
+  username: String!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input EditMessageInput {
+  messageId: String!
+  newContent: String!
+}
 
 type HealthCheckResponse {
   result: String!
@@ -32,13 +42,20 @@ type Message {
   conversation: Conversation
   conversationId: String!
   createdAt: DateTime!
+  deleted: DateTime
   id: ID!
   sender: User
   senderId: String!
+  updatedAt: DateTime!
 }
 
 type Mutation {
   createConversation(creatorId: String!, input: CreateConversationInput!): Conversation!
+  createUser(input: CreateUserInput!): User!
+  deleteMessage(messageId: String!, userId: String!): Message!
+  deleteUser(userId: String!): User!
+  editMessage(input: EditMessageInput!, userId: String!): Message!
+  editUser(input: CreateUserInput!, userId: String!): User!
   sendMessage(input: SendMessageInput!): Message!
 }
 
@@ -46,9 +63,10 @@ type Query {
   conversation(id: String!): Conversation
   conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
-  user(id: String!): User
+  user(id: String!): User!
   userConversations(userId: String!): [Conversation!]!
   users: [User!]!
+  usersByIds(ids: [String!]!): User!
 }
 
 input SendMessageInput {
@@ -59,7 +77,9 @@ input SendMessageInput {
 
 type User {
   createdAt: DateTime!
+  deleted: DateTime
   email: String!
   id: ID!
+  updatedAt: DateTime!
   username: String!
 }

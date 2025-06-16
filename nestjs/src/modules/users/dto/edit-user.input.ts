@@ -1,10 +1,10 @@
 import { InputType, Field } from '@nestjs/graphql';
 
 @InputType()
-export class CreateConversationInput {
+export class EditUserInput {
     @Field()
-    participantId: string;
+    username: string;
 
     @Field({ nullable: true })
-    initialMessage?: string;
+    email: string;
 }

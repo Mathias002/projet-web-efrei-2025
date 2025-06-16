@@ -1,80 +1,146 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
 import { Message } from '../../models/message';
 import { SendMessageInput } from './dto/send-message.input';
-import { ConversationsService } from '../conversations/conversations.service';
-import { QueueService } from '../../queue/queue.service';
-import { MessageQueuePayload } from '../../queue/interfaces/queue.interfaces';
+import { PrismaService } from 'prisma/prisma.service';
+import { mapToMessage } from './message.mapper';
+import { EditMessageInput } from './dto/edit-message.input';
 
 @Injectable()
 export class MessagesService {
-  private messages: Message[] = [];
 
   constructor(
-    private readonly conversationsService: ConversationsService,
-    private readonly usersService: UsersService,
-    private readonly queueService: QueueService,
-  ) { }
+    private readonly prisma: PrismaService,
+  ) {}
 
-  findByConversationId(conversationId: string): Message[] {
-    return this.messages
-      .filter(message => message.conversationId === conversationId)
-      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+  async findByConversationId(conversationId: string): Promise<Message[]> {
+    const rawMessages = await this.prisma.message.findMany({
+      where: {
+        conversationId: conversationId,
+        deleted: null
+      },
+      orderBy: {
+        createdAt: 'asc'
+      }
+    });
+
+    return rawMessages.map(mapToMessage);
+  }
+
+  async findById(id: string): Promise<Message | null> {
+    const message = await this.prisma.message.findUnique({
+      where: { id }
+    });
+
+    return message ? mapToMessage(message) : null;
   }
 
   async send(input: SendMessageInput): Promise<Message> {
-    const conversation = this.conversationsService.findById(input.conversationId);
-    const sender = this.usersService.findById(input.senderId);
+    // On vérifie que la conversation existe
+    const conversation = await this.prisma.conversation.findUnique({
+      where: { id: input.conversationId },
+      include: {
+        participantLinks: true
+      }
+    });
 
     if (!conversation) {
       throw new Error('Conversation not found');
     }
 
+    // On vérifie que l'expéditeur existe
+    const sender = await this.prisma.user.findUnique({
+      where: { id: input.senderId }
+    });
+
     if (!sender) {
       throw new Error('Sender not found');
     }
 
-    // Vérifier que l'expéditeur fait partie de la conversation
-    const isParticipant = conversation.participants.some(p => p.id === input.senderId);
+    // On vérifier que l'expéditeur fait partie de la conversation
+    const isParticipant = conversation.participantLinks.some(
+      link => link.userId === input.senderId
+    );
+    
     if (!isParticipant) {
       throw new Error('Sender is not a participant in this conversation');
     }
 
-    const message: Message = {
-      id: `msg-${Date.now()}`,
-      content: input.content,
-      senderId: input.senderId,
-      conversationId: input.conversationId,
-      createdAt: new Date(),
-    };
+    // Créer le message
+    const createdMessage = await this.prisma.message.create({
+      data: {
+        content: input.content,
+        senderId: input.senderId,
+        conversationId: input.conversationId,
+      },
+    });
 
-    // Publier dans la queue au lieu de sauvegarder directement
-    const queuePayload: MessageQueuePayload = {
-      id: message.id,
-      content: message.content,
-      senderId: message.senderId,
-      conversationId: message.conversationId,
-      timestamp: message.createdAt.getTime(),
-    };
+    // On Met à jour la conversation avec la date du dernier message
+    await this.prisma.conversation.update({
+      where: { id: input.conversationId },
+      data: {
+        lastMessage: createdMessage.createdAt
+      }
+    });
 
-    await this.queueService.publishMessage(queuePayload);
-
-    // Retourner le message immédiatement (réactivité)
-    return message;
+    return mapToMessage(createdMessage);
   }
 
-  saveMessage(messageData: MessageQueuePayload): Message {
-    const message: Message = {
-      id: messageData.id,
-      content: messageData.content,
-      senderId: messageData.senderId,
-      conversationId: messageData.conversationId,
-      createdAt: new Date(messageData.timestamp),
-    };
+  async editMessage(input: EditMessageInput, userId: string): Promise<Message> {
 
-    //save bdd prisma 
-    this.messages.push(message);
-    return message;
+    const message = await this.prisma.message.findUnique({
+      where: {
+        id: input.messageId
+      }
+    });
+
+    if(!message) {
+      throw new Error('Message not found.');
+    }
+
+    if(message.senderId !== userId) {
+      throw new Error('Unauthorized to edit this message.')
+    }
+
+    const updated = await this.prisma.message.update({
+      where: {
+        id: input.messageId,
+      },
+      data: {
+        content: input.newContent,
+      },
+    });
+
+    return mapToMessage(updated);
+
+  }
+
+  async deleteMessage(messageId: string, userId: string) {
+
+    const message = await this.prisma.message.findUnique({
+      where: {
+        id: messageId
+      }
+    });
+
+    if(!message) {
+      throw new Error('Message not found.');
+    }
+
+    if(message.senderId !== userId) { // replace userId by auth 
+      throw new Error('Unauthorized to delete this message.')
+    }
+
+    const deleted = await this.prisma.message.update({
+      where: {
+        id: messageId,
+      },
+      data: {
+        deleted: new Date(),
+      },
+    });
+
+    return mapToMessage(deleted);
+
   }
 
 }

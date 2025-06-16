@@ -11,6 +11,7 @@ import { QueueModule } from './queue/queue.module';
 import { UsersModule } from './modules/users/user.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { PrismaModule } from '../prisma/prisma.module'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MessagesModule } from './modules/messages/messages.module';
     UsersModule,
     ConversationsModule,
     MessagesModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
