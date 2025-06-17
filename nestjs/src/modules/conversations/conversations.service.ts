@@ -61,19 +61,39 @@ export class ConversationsService {
       throw new Error('Creator or participant not found');
     }
 
-    // On vérifie si la conversation existe déjà
+    // On vérifie si la conversation existe déjà entre ces deux utilisateurs spécifiques
     const existing = await this.prisma.conversation.findFirst({
       where: {
-        participantLinks: {
-          some: {
-            userId: {
-              in: [creatorId, input.participantId],
-            },
+        AND: [
+          // La conversation doit avoir exactement ces deux participants
+          {
+            participantLinks: {
+              some: {
+                userId: creatorId
+              }
+            }
           },
-        },
-        createdBy: {
-          in: [creatorId, input.participantId],
-        },
+          {
+            participantLinks: {
+              some: {
+                userId: input.participantId
+              }
+            }
+          },
+          // Optionnel : s'assurer qu'il n'y a que 2 participants au total
+          // Décommentez les lignes suivantes si vous voulez cette contrainte
+          /*
+          {
+            participantLinks: {
+              none: {
+                userId: {
+                  notIn: [creatorId, input.participantId]
+                }
+              }
+            }
+          }
+          */
+        ]
       },
       include: {
         participantLinks: {

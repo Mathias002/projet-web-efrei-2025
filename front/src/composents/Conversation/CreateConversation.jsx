@@ -48,8 +48,6 @@ function CreateConversation({ creatorId, onCreated }) {
     },
   });
 
-  console.log(CREATE_CONVERSATION);
-
   const [createConversation, { loading: loadingCreate, error: createError }] = useMutation(CREATE_CONVERSATION, {
     onCompleted: (data) => {
       onCreated(data.createConversation);
@@ -59,8 +57,6 @@ function CreateConversation({ creatorId, onCreated }) {
       setErrorMsg('');
     },
   });
-
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
