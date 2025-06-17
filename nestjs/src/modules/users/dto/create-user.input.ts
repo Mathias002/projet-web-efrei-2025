@@ -7,4 +7,6 @@ export class CreateUserInput {
 
     @Field({ nullable: true })
     email: string;
+    @Field()
+    password: string;
 }
