@@ -30,7 +30,7 @@
 // export default App;
 
 import React, { useState } from 'react';
-// import LoginForm from './components/LoginForm';
+import LoginForm from './composents/User/LoginForm';
 import ChatHome from './composents/Home/ChatHome';
 
 function App() {
@@ -46,8 +46,8 @@ function App() {
       {currentUser ? (
         <ChatHome currentUser={currentUser} onLogout={() => setCurrentUser(null)} />
       ) : (
-        // <LoginForm onLogin={setCurrentUser} />
-        <div>Connexion désactivée temporairement</div>
+        <LoginForm onLogin={setCurrentUser} />
+        // <div>Connexion désactivée temporairement</div>
       )}
     </div>
   );
