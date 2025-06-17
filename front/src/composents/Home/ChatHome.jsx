@@ -1,5 +1,6 @@
 import ConversationList from '../Conversation/ConversationList';
 import CreateConversation from '../Conversation/CreateConversation';
+import EditUserForm from '../User/EditUserForm';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap'; // Pense à installer react-bootstrap
 
@@ -7,6 +8,7 @@ function ChatHome({ currentUser, onLogout }) {
 
   const [selectedConvId, setSelectedConvId] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
 
   
   const userId = "0d413f71-5986-42dc-a1ac-096b3b98629e";
@@ -16,6 +18,11 @@ function ChatHome({ currentUser, onLogout }) {
     // Ici tu peux rafraîchir ta liste de conversations ou ajouter la conversation au state
     setShowModal(false);       // ferme la popup
     setSelectedConvId(newConv.id); // optionnel : sélectionne directement la nouvelle conversation
+  };
+
+  const handleSaveUser = (updatedFields) => {
+    console.log('Modifications à envoyer au backend:', updatedFields);
+    setShowEditUserModal(false);
   };
 
   return (
@@ -45,8 +52,11 @@ function ChatHome({ currentUser, onLogout }) {
             ➕ Nouvelle conversation
           </Button>
 
-          <Button variant="outline-secondary" className="w-100" onClick={onLogout}>
+          <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
             👤 Gestion utilisateur
+          </Button>
+          <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
+            Déconnexion
           </Button>
         </div>
       </div>
@@ -93,6 +103,19 @@ function ChatHome({ currentUser, onLogout }) {
           <CreateConversation
             creatorId={userId}
             onCreated={handleNewConversation}
+          />
+        </Modal.Body>
+      </Modal>
+
+      <Modal show={showEditUserModal} onHide={() => setShowEditUserModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Modifier l'utilisateur</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <EditUserForm
+            user={currentUser}
+            onSave={handleSaveUser}
+            onClose={() => setShowEditUserModal(false)}
           />
         </Modal.Body>
       </Modal>
