@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
-import { MessageQueuePayload, ConversationQueuePayload } from './interfaces/queue.interfaces';
+import { MessageQueuePayload } from './interfaces/queue.interfaces';
 
-// publication dans les files
+// publication dans les queues
 
 @Injectable()
 export class QueueService {
@@ -17,23 +17,9 @@ export class QueueService {
         'message.created',
         message,
       );
-      this.logger.log(`Message published to queue: ${message.id}`);
+      this.logger.log(`Message published to queue: ${message.tempId}`);
     } catch (error) {
       this.logger.error(`Failed to publish message: ${error.message}`);
-      throw error;
-    }
-  }
-
-  async publishConversation(conversation: ConversationQueuePayload): Promise<void> {
-    try {
-      await this.amqpConnection.publish(
-        'messaging.exchange',
-        'conversation.created',
-        conversation,
-      );
-      this.logger.log(`Conversation published to queue: ${conversation.id}`);
-    } catch (error) {
-      this.logger.error(`Failed to publish conversation: ${error.message}`);
       throw error;
     }
   }

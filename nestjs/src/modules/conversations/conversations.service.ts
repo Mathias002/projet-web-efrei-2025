@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Conversation } from '../../models/conversation';
-import { ConversationQueuePayload } from '../../queue/interfaces/queue.interfaces';
 import { UsersService } from '../users/users.service';
 import { CreateConversationInput } from './dto/create-conversation.input';
 import { QueueService } from '../../queue/queue.service';
