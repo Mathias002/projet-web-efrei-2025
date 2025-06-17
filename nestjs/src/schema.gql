@@ -46,6 +46,11 @@ type HealthCheckResponse {
   timestamp: String!
 }
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Message {
   content: String!
   conversation: Conversation
@@ -65,6 +70,7 @@ type Mutation {
   deleteUser(userId: String!): User!
   editMessage(input: EditMessageInput!, userId: String!): Message!
   editUser(input: EditUserInput!, userId: String!): User!
+  loginUser(input: LoginInput!): User
   sendMessage(input: SendMessageInput!): Message!
 }
 

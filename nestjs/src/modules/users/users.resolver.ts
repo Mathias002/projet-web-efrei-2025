@@ -3,6 +3,7 @@ import { User } from '../../models/user';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { EditUserInput } from './dto/edit-user.input';
+import { LoginInput } from '../login/login.input';
 
 /**
  * Resolver GraphQL pour la gestion des utilisateurs dans l'application de chat.
@@ -205,4 +206,10 @@ export class UsersResolver {
         return this.usersService.deleteUser(userId);
     }
 
+    @Mutation(() => User, { nullable: true })
+    async loginUser(
+        @Args('input') input: LoginInput
+    ): Promise<User | null> {
+        return this.usersService.loginUser(input);
+    }
 }

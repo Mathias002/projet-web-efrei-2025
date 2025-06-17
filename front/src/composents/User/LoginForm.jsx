@@ -7,9 +7,10 @@ const LOGIN_USER = gql`
       id
       username
       email
-      token
+
     }
   }
+
 `;
 
 function LoginForm({ onLogin }) {
@@ -27,7 +28,7 @@ function LoginForm({ onLogin }) {
       const user = data.loginUser;
       onLogin(user); // callback pour stocker l'utilisateur côté app
       // Optionnel : stocker le token
-      localStorage.setItem('token', user.token);
+      // localStorage.setItem('token', user.token);
     } catch (err) {
       console.error('Erreur login', err);
     }
