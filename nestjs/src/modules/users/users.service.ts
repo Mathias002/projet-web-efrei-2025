@@ -29,7 +29,7 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
     return user ? mapUser(user) : null;
@@ -46,13 +46,12 @@ export class UsersService {
     });
 
     if (users.length != userIds.length) {
-      throw new Error('Sorry impossible to find some of these users. Please try again.');
+      throw new Error('Sorry, impossible to find some of these users. Please try again.');
     }
 
     // console.log(users);
 
     return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
-
   }
 
   async createUser(input: CreateUserInput) {
@@ -63,18 +62,10 @@ export class UsersService {
     });
 
     if (existing) {
-      throw new Error('A user with the same email adress already exist.');
+      throw new Error('A user with the same email adress already exists.');
     }
 
-    const createdUser = await this.prisma.user.create({
-      data: {
-        username: input.username,
-        email: input.email
-      },
-    });
-
-    return mapUser(createdUser);
-
+    return this.prisma.user.create({ data: input });
   }
 
   async editUser(userId: string, input: EditUserInput) {
@@ -85,31 +76,31 @@ export class UsersService {
     });
 
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
-    const existingEmail = await this.prisma.user.findFirst({
-      where: {
-        email: input.email,
+    if (input.email && input.email.trim() !== '') {
+      const existingEmail = await this.prisma.user.findFirst({
+        where: {
+          email: input.email,
+        }
+      });
+
+      if (existingEmail) {
+        throw new Error('A user with the same email adress already exists.');
       }
-    });
-
-    if (existingEmail) {
-      throw new Error('A user with the same email adress already exist.');
     }
 
-    const editUser = await this.prisma.user.update({
+    return this.prisma.user.update({
       where: {
         id: userId
       },
       data: {
         username: input.username,
-        email: input.email
+        email: input.email,
+        password: input.password,
       },
     });
-
-    return mapUser(editUser);
-
   }
 
   async deleteUser(userId: string) {
@@ -120,7 +111,7 @@ export class UsersService {
     });
 
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
     const deleteUser = await this.prisma.user.update({
@@ -133,7 +124,6 @@ export class UsersService {
     });
 
     return mapUser(deleteUser);
-
   }
 
 }

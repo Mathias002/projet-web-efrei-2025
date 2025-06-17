@@ -13,6 +13,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
       id: link.user.id,
       username: link.user.username,
       email: link.user.email,
+      password: link.user.password,
       createdAt: link.user.createdAt,
       updatedAt: link.user.updatedAt,
       deleted: link.user.deleted,
