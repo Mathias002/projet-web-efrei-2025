@@ -5,7 +5,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { mapToMessage } from './message.mapper';
 import { EditMessageInput } from './dto/edit-message.input';
 import { MessageQueuePayload } from 'src/queue/interfaces/queue.interfaces';
-import { QueueService } from 'src/queue/queue.service';
+import { QueueService } from '../../queue/queue.service';
 
 @Injectable()
 export class MessagesService {

@@ -46,7 +46,7 @@ describe('HealthController', () => {
       const result = await controller.testQueue();
 
       expect(result.message).toBe('Message successfully sent to RabbitMQ queue');
-      expect(result.jobId).toMatch(/^test-\d+$/);
+      expect(result.jobId).toMatch(/^msg-\d+$/);
       expect(queueService.publishMessage).toHaveBeenCalledWith(expect.objectContaining({
         content: 'Test message from health controller',
         senderId: 'user-test',
