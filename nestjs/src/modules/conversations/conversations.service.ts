@@ -4,7 +4,7 @@ import { ConversationQueuePayload } from '../../queue/interfaces/queue.interface
 import { UsersService } from '../users/users.service';
 import { CreateConversationInput } from './dto/create-conversation.input';
 import { QueueService } from '../../queue/queue.service';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { mapToConversation } from './conversation.mapper';
 
 @Injectable()

@@ -1,6 +1,7 @@
 .env
 node_modules
 # compiled output
+nestjs/coverage
 nestjs/dist
 nestjs/node_modules
 nestjs/package-lock.json
