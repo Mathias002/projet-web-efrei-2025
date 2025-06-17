@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.8.2",
     "apollo-server-express": "^3.13.0",
+    "bcrypt": "^6.0.0",
     "graphql": "^16.11.0",
     "prisma": "^6.8.2",
     "reflect-metadata": "^0.2.2",

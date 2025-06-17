@@ -4,6 +4,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
 import { EditUserInput } from './dto/edit-user.input';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -65,7 +66,15 @@ export class UsersService {
       throw new Error('A user with the same email adress already exists.');
     }
 
-    return this.prisma.user.create({ data: input });
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+
+    return this.prisma.user.create({
+      data: {
+        username: input.username,
+        email: input.email,
+        password: hashedPassword,
+      }, });
   }
 
   async editUser(userId: string, input: EditUserInput) {
@@ -83,6 +92,7 @@ export class UsersService {
       const existingEmail = await this.prisma.user.findFirst({
         where: {
           email: input.email,
+          NOT: { id: userId },
         }
       });
 
@@ -91,15 +101,27 @@ export class UsersService {
       }
     }
 
+    const data: Partial<typeof input> = {};
+
+    if (input.username?.trim()) {
+      data.username = input.username;
+    }
+
+    if (input.email?.trim()) {
+      data.email = input.email;
+    }
+
+    if (input.password?.trim()) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+      data.password = hashedPassword;
+    }
+
     return this.prisma.user.update({
       where: {
         id: userId
       },
-      data: {
-        username: input.username,
-        email: input.email,
-        password: input.password,
-      },
+      data
     });
   }
 
