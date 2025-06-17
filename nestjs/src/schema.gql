@@ -2,12 +2,92 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Conversation {
+  createdAt: DateTime!
+  createdBy: String!
+  id: ID!
+  lastMessage: DateTime
+  messages: [Message!]
+  participants: [User!]!
+}
+
+input CreateConversationInput {
+  initialMessage: String
+  participantId: String!
+}
+
+input CreateUserInput {
+  email: String
+  password: String!
+  username: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input EditMessageInput {
+  messageId: String!
+  newContent: String!
+}
+
+input EditUserInput {
+  email: String
+  password: String
+  username: String
+}
+
 type HealthCheckResponse {
   result: String!
-  timestamp: String!
   service: String!
+  timestamp: String!
+}
+
+type Message {
+  content: String!
+  conversation: Conversation
+  conversationId: String!
+  createdAt: DateTime!
+  deleted: DateTime
+  id: ID!
+  sender: User
+  senderId: String!
+  updatedAt: DateTime!
+}
+
+type Mutation {
+  createConversation(creatorId: String!, input: CreateConversationInput!): Conversation!
+  createUser(input: CreateUserInput!): User!
+  deleteMessage(messageId: String!, userId: String!): Message!
+  deleteUser(userId: String!): User!
+  editMessage(input: EditMessageInput!, userId: String!): Message!
+  editUser(input: EditUserInput!, userId: String!): User!
+  sendMessage(input: SendMessageInput!): Message!
 }
 
 type Query {
+  conversation(id: String!): Conversation
+  conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
+  user(id: String!): User!
+  userConversations(userId: String!): [Conversation!]!
+  users: [User!]!
+  usersByIds(ids: [String!]!): User!
+}
+
+input SendMessageInput {
+  content: String!
+  conversationId: String!
+  senderId: String!
+}
+
+type User {
+  createdAt: DateTime!
+  deleted: DateTime
+  email: String!
+  id: ID!
+  password: String!
+  updatedAt: DateTime!
+  username: String!
 }

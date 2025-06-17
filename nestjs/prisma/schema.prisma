@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String                    @id @default(uuid())
+  username             String
+  email                String                    @unique
+  password             String
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  deleted              DateTime?
+  messages             Message[]                 @relation("UserMessages")
+  createdConversations Conversation[]            @relation("CreatedBy")
+  participantLinks     ConversationParticipant[] // lien vers la table pivot
+}
+
+model Conversation {
+  id               String                    @id @default(uuid())
+  createdBy        String
+  createdAt        DateTime                  @default(now())
+  lastMessage      DateTime?
+  deleted          DateTime?
+  messages         Message[]
+  creator          User                      @relation("CreatedBy", fields: [createdBy], references: [id])
+  participantLinks ConversationParticipant[] // lien vers la table pivot
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  content        String
+  senderId       String
+  conversationId String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  deleted        DateTime?
+  sender         User         @relation("UserMessages", fields: [senderId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model ConversationParticipant {
+  userId         String
+  conversationId String
+
+  user         User         @relation(fields: [userId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+
+  @@id([userId, conversationId]) // clé primaire 
+}
