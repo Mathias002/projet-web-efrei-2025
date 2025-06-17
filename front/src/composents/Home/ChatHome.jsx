@@ -1,6 +1,10 @@
-import React from 'react';
+import ConversationList from '../Conversation/ConversationList';
+import React, { useState } from 'react';
 
 function ChatHome({ currentUser, onLogout }) {
+
+  const [selectedConvId, setSelectedConvId] = useState(null);
+
   return (
     <div className="d-flex vh-100">
       {/* Sidebar gauche */}
@@ -11,10 +15,11 @@ function ChatHome({ currentUser, onLogout }) {
 
         {/* Liste des conversations */}
         <div className="flex-grow-1 overflow-auto px-3">
-          {/* TODO: Remplacer par une vraie liste */}
-          <div className="mb-2 p-2 bg-white rounded shadow-sm"># Général</div>
-          <div className="mb-2 p-2 bg-white rounded shadow-sm"># Projet X</div>
-          <div className="mb-2 p-2 bg-white rounded shadow-sm"># Support</div>
+            <ConversationList
+                userId="0d413f71-5986-42dc-a1ac-096b3b98629e" // à remplacer plus tard par l’ID dynamique du user connecté
+                selectedId={selectedConvId}
+                onSelect={setSelectedConvId}
+            />
         </div>
 
         {/* Boutons en bas */}
