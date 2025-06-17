@@ -23,7 +23,7 @@ import { PrismaModule } from '../prisma/prisma.module'
       introspection: true, // Permet l'introspection du schéma
       sortSchema: true, // Trie le schéma pour une meilleure lisibilité
     }),
-    HealthModule, // Votre module health existant
+    HealthModule, 
     QueueModule,
     HealthModule,
     UsersModule,
