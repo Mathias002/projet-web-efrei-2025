@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import App from './App.jsx';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // 🔗 Configure Apollo avec ton URL backend
 const client = new ApolloClient({

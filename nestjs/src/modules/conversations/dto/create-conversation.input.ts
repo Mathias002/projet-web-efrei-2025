@@ -5,6 +5,9 @@ export class CreateConversationInput {
     @Field()
     participantId: string;
 
+    @Field()
+    nom: string;
+
     @Field({ nullable: true })
     initialMessage?: string;
 }
