@@ -4,6 +4,7 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
 import { EditUserInput } from './dto/edit-user.input';
+import { LoginInput } from '../login/login.input';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -146,6 +147,20 @@ export class UsersService {
     });
 
     return mapUser(deleteUser);
+  }
+
+  async loginUser(input: LoginInput): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { email: input.email },
+    });
+
+    if (!user) return null;
+
+    const isValid = await bcrypt.compare(input.password, user.password);
+    if (!isValid) return null;
+
+    const { password, ...rest } = user;
+    return rest as User;
   }
 
 }

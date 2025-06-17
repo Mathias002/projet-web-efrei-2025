@@ -88,6 +88,7 @@ export class ConversationsService {
     const conversation = await this.prisma.conversation.create({
       data: {
         createdBy: creatorId,
+        nom: input.nom,
         createdAt: new Date(),
       },
     });

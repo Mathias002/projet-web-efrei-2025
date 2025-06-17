@@ -26,6 +26,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
       createdAt: msg.createdAt,
       updatedAt: msg.updatedAt,
     })),
+    nom: prismaConversation.nom,
     createdBy: prismaConversation.createdBy,
     createdAt: prismaConversation.createdAt,
     lastMessage: prismaConversation.lastMessage ?? undefined,
