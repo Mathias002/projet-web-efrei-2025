@@ -37,6 +37,20 @@ export class UsersService {
     return user ? mapUser(user) : null;
   }
 
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+
+    if (!user) {
+      throw new Error('Sorry, impossible to find this user.');
+    }
+
+    return user ? mapUser(user) : null;
+  }
+
   async findByIds(userIds: string[]) {
     const users = await this.prisma.user.findMany({
       where: {
