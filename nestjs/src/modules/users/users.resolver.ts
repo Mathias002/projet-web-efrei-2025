@@ -2,6 +2,7 @@ import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { User } from '../../models/user';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dto/create-user.input';
+import { EditUserInput } from './dto/edit-user.input';
 
 /**
  * Resolver GraphQL pour la gestion des utilisateurs dans l'application de chat.
@@ -147,7 +148,7 @@ export class UsersResolver {
     @Mutation(() => User)
     async editUser(
         @Args('userId') userId: string,
-        @Args('input') input: CreateUserInput,
+        @Args('input') input: EditUserInput,
     ): Promise<User> {
         return this.usersService.editUser(userId, input);
     }

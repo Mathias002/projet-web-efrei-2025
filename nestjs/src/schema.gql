@@ -18,6 +18,7 @@ input CreateConversationInput {
 
 input CreateUserInput {
   email: String
+  password: String!
   username: String!
 }
 
@@ -29,6 +30,12 @@ scalar DateTime
 input EditMessageInput {
   messageId: String!
   newContent: String!
+}
+
+input EditUserInput {
+  email: String
+  password: String
+  username: String
 }
 
 type HealthCheckResponse {
@@ -55,7 +62,7 @@ type Mutation {
   deleteMessage(messageId: String!, userId: String!): Message!
   deleteUser(userId: String!): User!
   editMessage(input: EditMessageInput!, userId: String!): Message!
-  editUser(input: CreateUserInput!, userId: String!): User!
+  editUser(input: EditUserInput!, userId: String!): User!
   sendMessage(input: SendMessageInput!): Message!
 }
 
@@ -80,6 +87,7 @@ type User {
   deleted: DateTime
   email: String!
   id: ID!
+  password: String!
   updatedAt: DateTime!
   username: String!
 }
