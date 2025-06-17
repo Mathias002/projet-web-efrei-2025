@@ -8,11 +8,13 @@ type Conversation {
   id: ID!
   lastMessage: DateTime
   messages: [Message!]
+  nom: String!
   participants: [User!]!
 }
 
 input CreateConversationInput {
   initialMessage: String
+  nom: String!
   participantId: String!
 }
 

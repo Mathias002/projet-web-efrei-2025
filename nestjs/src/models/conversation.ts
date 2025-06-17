@@ -14,6 +14,9 @@ export class Conversation {
     messages?: Message[];
 
     @Field()
+    nom: string;
+
+    @Field()
     createdBy: string;
 
     @Field()
