@@ -73,6 +73,7 @@ type Query {
   conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
   user(id: String!): User!
+  userByEmail(email: String!): User!
   userConversations(userId: String!): [Conversation!]!
   users: [User!]!
   usersByIds(ids: [String!]!): User!

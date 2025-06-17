@@ -11,7 +11,7 @@ export class ConversationsService {
 
   constructor(
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
 
   async findByUserId(userId: string) {
     const rawConversations = await this.prisma.conversation.findMany({
@@ -54,22 +54,25 @@ export class ConversationsService {
   }
 
   async create(input: CreateConversationInput, creatorId: string) {
-    const creator = await this.prisma.user.findUnique({where: { id: creatorId } });
-    const participant = await this.prisma.user.findUnique({where: { id: input.participantId } });
+    const creator = await this.prisma.user.findUnique({ where: { id: creatorId } });
+    const participant = await this.prisma.user.findUnique({ where: { id: input.participantId } });
 
-    if(!creator || !participant) {
+    if (!creator || !participant) {
       throw new Error('Creator or participant not found');
     }
 
     // On vérifie si la conversation existe déjà
     const existing = await this.prisma.conversation.findFirst({
-      where : {
+      where: {
         participantLinks: {
-          every: {
+          some: {
             userId: {
               in: [creatorId, input.participantId],
             },
           },
+        },
+        createdBy: {
+          in: [creatorId, input.participantId],
         },
       },
       include: {
@@ -83,8 +86,8 @@ export class ConversationsService {
     });
 
     // si la conversation existe déjà on la return
-    if(existing) return mapToConversation(existing);
-    
+    if (existing) return mapToConversation(existing);
+
     const conversation = await this.prisma.conversation.create({
       data: {
         createdBy: creatorId,
@@ -93,7 +96,7 @@ export class ConversationsService {
       },
     });
 
-    if(input.initialMessage?.trim()) {
+    if (input.initialMessage?.trim()) {
       await this.prisma.message.create({
         data: {
           content: input.initialMessage,
@@ -106,7 +109,7 @@ export class ConversationsService {
     await this.prisma.conversationParticipant.createMany({
       data: [
         { userId: creatorId, conversationId: conversation.id },
-        { userId: input.participantId, conversationId: conversation.id},
+        { userId: input.participantId, conversationId: conversation.id },
       ],
     });
 

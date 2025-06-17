@@ -1,9 +1,22 @@
 import ConversationList from '../Conversation/ConversationList';
+import CreateConversation from '../Conversation/CreateConversation';
 import React, { useState } from 'react';
+import { Modal, Button } from 'react-bootstrap'; // Pense à installer react-bootstrap
 
 function ChatHome({ currentUser, onLogout }) {
 
   const [selectedConvId, setSelectedConvId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  
+  const userId = "0d413f71-5986-42dc-a1ac-096b3b98629e";
+
+  // Callback quand une nouvelle conversation est créée
+  const handleNewConversation = (newConv) => {
+    // Ici tu peux rafraîchir ta liste de conversations ou ajouter la conversation au state
+    setShowModal(false);       // ferme la popup
+    setSelectedConvId(newConv.id); // optionnel : sélectionne directement la nouvelle conversation
+  };
 
   return (
     <div className="d-flex vh-100">
@@ -15,21 +28,26 @@ function ChatHome({ currentUser, onLogout }) {
 
         {/* Liste des conversations */}
         <div className="flex-grow-1 overflow-auto px-3">
-            <ConversationList
-                userId="0d413f71-5986-42dc-a1ac-096b3b98629e" // à remplacer plus tard par l’ID dynamique du user connecté
-                selectedId={selectedConvId}
-                onSelect={setSelectedConvId}
-            />
+          <ConversationList
+            userId={userId} // à remplacer plus tard par l’ID dynamique du user connecté
+            selectedId={selectedConvId}
+            onSelect={setSelectedConvId}
+          />
         </div>
 
         {/* Boutons en bas */}
         <div className="p-3 border-top">
-          <button className="btn btn-primary w-100 mb-2">
+          <Button 
+            variant="primary" 
+            className="w-100 mb-2" 
+            onClick={() => setShowModal(true)}
+          >
             ➕ Nouvelle conversation
-          </button>
-          <button className="btn btn-outline-secondary w-100" onClick={onLogout}>
+          </Button>
+
+          <Button variant="outline-secondary" className="w-100" onClick={onLogout}>
             👤 Gestion utilisateur
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -65,6 +83,19 @@ function ChatHome({ currentUser, onLogout }) {
           </form>
         </div>
       </div>
+
+      {/* Modal pour créer une conversation */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Créer une nouvelle conversation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <CreateConversation
+            creatorId={userId}
+            onCreated={handleNewConversation}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }

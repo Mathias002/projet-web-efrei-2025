@@ -60,6 +60,32 @@ export class UsersResolver {
         return this.usersService.findById(id);
     }
 
+    // Récupère un utilisateur via son email
+
+    // 🧩 Paramètres :
+    // - `email: String!` → Email de l'utilisateur (**obligatoire**)
+
+    /**
+     * 📌 Requête GraphQL de test :
+     * 
+     * query GetUserByEmail {
+     *   user(email: "email") {
+     *     id
+     *     username
+     *     email
+     *     createdAt
+     *     updatedAt
+     *     deleted
+     *   }
+     * }
+     */
+    @Query(() => User)
+    async userByEmail(
+        @Args('email') email: string
+    ): Promise<User | null> {
+        return this.usersService.findByEmail(email);
+    }
+
     // Récupère plusieurs utilisateurs via une liste d'ids
 
     // 🧩 Paramètres :
