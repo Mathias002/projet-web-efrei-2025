@@ -5,7 +5,7 @@ import DeleteUser from '../User/DeleteUser';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
-import Conversation from '../Conversation/ConversationDetails';
+import ConversationDetails from '../Conversation/ConversationDetails';
 
 function ChatHome({ currentUser, onLogout }) {
 
@@ -21,9 +21,8 @@ function ChatHome({ currentUser, onLogout }) {
 
   // Callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
-    // Ici tu peux rafraîchir ta liste de conversations ou ajouter la conversation au state
-    setShowModal(false);       // ferme la popup
-    setSelectedConvId(newConv.id); // optionnel : sélectionne directement la nouvelle conversation
+    setShowModal(false);       
+    setSelectedConvId(newConv.id);
   };
 
   const handleSaveUser = (updatedFields) => {
@@ -62,42 +61,21 @@ function ChatHome({ currentUser, onLogout }) {
             ➕ Nouvelle conversation
           </Button>
 
-          <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
-            👤 Gestion utilisateur
-          </Button>
-          <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
-            Déconnexion
-          </Button>
-          <Button variant="outline-secondary" className="w-100">
-            👤 Gestion du profil
-          </Button>
-
-          <button className="btn btn-danger w-100" onClick={handleLogout}>
-            🔓 Déconnexion
-          </button>
-        </div>
-      </div>
-
-      {/* Zone principale droite */}
-      <div className="flex-grow-1 d-flex flex-column">
-        <div className="flex-grow-1">
-          <Conversation conversationId={selectedConvId} />
+            <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
+              👤 Gestion du profil
+            </Button>
+            <Button variant="btn btn-danger w-100" className="w-100 mb-2" onClick={onLogout}>
+              🔓 Déconnexion
+            </Button>
+          </div>
         </div>
 
-        {/* Formulaire d'envoi de message */}
-        {/* <div className="border-top p-3 bg-white">
-        <form className="d-flex">
-          <input
-            type="text"
-            className="form-control me-2"
-            placeholder="Tapez votre message..."
-          />
-          <button type="submit" className="btn btn-primary">
-            Envoyer
-          </button>
-        </form>
-      </div> */}
-      </div>
+        {/* Zone principale droite */}
+        <div className="flex-grow-1 d-flex flex-column">
+          <div className="flex-grow-1">
+            <ConversationDetails conversationId={selectedConvId} />
+          </div>
+        </div>
 
         {/* Modal pour créer une conversation */}
         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
