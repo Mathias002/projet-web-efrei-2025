@@ -15,3 +15,13 @@
 .weight-500{
     font-weight: 500;
 }
+
+.input-message{
+    margin-bottom: 5.2rem;
+}
+
+.container-chat{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

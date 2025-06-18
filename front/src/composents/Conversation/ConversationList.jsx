@@ -30,11 +30,13 @@ function ConversationList({ userId, selectedId, onSelect }) {
                 <div className="text-muted text-center mt-3">Aucune conversation</div>
             ) : (
                 conversations.map((conv) => (
-                    <div className='d-flex justify-content-between div-conv' >
+                    <div 
+                        className='d-flex justify-content-between div-conv' 
+                        onClick={() => onSelect(conv.id)}
+                    >
                         <div
                             key={conv.id}
                             className={`p-2 rounded mb-2 weight-500`}
-                            onClick={() => onSelect(conv.id)}
                         >
                             {conv.nom}
                         </div>

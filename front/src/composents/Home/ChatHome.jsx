@@ -3,6 +3,7 @@ import CreateConversation from '../Conversation/CreateConversation';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
+import Conversation from '../Conversation/ConversationDetails';
 
 function ChatHome({ currentUser, onLogout }) {
 
@@ -66,24 +67,12 @@ function ChatHome({ currentUser, onLogout }) {
 
       {/* Zone principale droite */}
       <div className="flex-grow-1 d-flex flex-column">
-        {/* Header conversation */}
-        <div className="border-bottom p-3 bg-white shadow-sm">
-          <h5 className="mb-0"># Général</h5>
-        </div>
-
-        {/* Zone des messages */}
-        <div className="flex-grow-1 overflow-auto p-3" style={{ backgroundColor: '#f8f9fa' }}>
-          {/* TODO: Afficher les messages ici */}
-          <div className="mb-2">
-            <strong>Alice:</strong> Salut tout le monde !
-          </div>
-          <div className="mb-2">
-            <strong>Bob:</strong> Hello ! 👋
-          </div>
+        <div className="flex-grow-1">
+          <Conversation conversationId={selectedConvId} />
         </div>
 
         {/* Formulaire d'envoi de message */}
-        <div className="border-top p-3 bg-white">
+        {/* <div className="border-top p-3 bg-white">
           <form className="d-flex">
             <input
               type="text"
@@ -94,7 +83,7 @@ function ChatHome({ currentUser, onLogout }) {
               Envoyer
             </button>
           </form>
-        </div>
+        </div> */}
       </div>
 
       {/* Modal pour créer une conversation */}
