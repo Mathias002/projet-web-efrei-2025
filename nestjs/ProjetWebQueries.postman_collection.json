@@ -76,7 +76,6 @@
 									"",
 									"pm.test(\"Created user has correct username and email\", function () {",
 									"    const response = pm.response.json();",
-									"    console.log(response);",
 									"    ",
 									"    pm.expect(response).to.not.have.property(\"errors\");",
 									"    ",
