@@ -5,6 +5,7 @@ import DeleteUser from '../User/DeleteUser';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
+import Conversation from '../Conversation/ConversationDetails';
 
 function ChatHome({ currentUser, onLogout }) {
 
@@ -27,7 +28,7 @@ function ChatHome({ currentUser, onLogout }) {
 
   const handleSaveUser = (updatedFields) => {
     setShowEditUserModal(false);
-  };
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
@@ -62,45 +63,40 @@ function ChatHome({ currentUser, onLogout }) {
           </Button>
 
           <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
-            👤 Gestion du profil
+            👤 Gestion utilisateur
           </Button>
           <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
-            🔓 Déconnexion
+            Déconnexion
           </Button>
+          <Button variant="outline-secondary" className="w-100">
+            👤 Gestion du profil
+          </Button>
+
+          <button className="btn btn-danger w-100" onClick={handleLogout}>
+            🔓 Déconnexion
+          </button>
         </div>
       </div>
 
       {/* Zone principale droite */}
       <div className="flex-grow-1 d-flex flex-column">
-        {/* Header conversation */}
-        <div className="border-bottom p-3 bg-white shadow-sm">
-          <h5 className="mb-0"># Général</h5>
-        </div>
-
-        {/* Zone des messages */}
-        <div className="flex-grow-1 overflow-auto p-3" style={{ backgroundColor: '#f8f9fa' }}>
-          {/* TODO: Afficher les messages ici */}
-          <div className="mb-2">
-            <strong>Alice:</strong> Salut tout le monde !
-          </div>
-          <div className="mb-2">
-            <strong>Bob:</strong> Hello ! 👋
-          </div>
+        <div className="flex-grow-1">
+          <Conversation conversationId={selectedConvId} />
         </div>
 
         {/* Formulaire d'envoi de message */}
-        <div className="border-top p-3 bg-white">
-          <form className="d-flex">
-            <input
-              type="text"
-              className="form-control me-2"
-              placeholder="Tapez votre message..."
-            />
-            <button type="submit" className="btn btn-primary">
-              Envoyer
-            </button>
-          </form>
-        </div>
+        {/* <div className="border-top p-3 bg-white">
+        <form className="d-flex">
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder="Tapez votre message..."
+          />
+          <button type="submit" className="btn btn-primary">
+            Envoyer
+          </button>
+        </form>
+      </div> */}
       </div>
 
       {/* Modal pour créer une conversation */}
