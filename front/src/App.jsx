@@ -27,6 +27,7 @@ function App() {
     }
   }, []);
 
+  // supprime le token de l'utilisateur du local storage
   const handleLogout = () => {
     localStorage.removeItem('token');
     setCurrentUser(null);

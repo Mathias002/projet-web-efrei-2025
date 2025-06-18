@@ -6,7 +6,7 @@ function MessageItem({ msg, currentUserId, refetchMessages }) {
   const isMine = msg.sender?.id === currentUserId;
 
   return (
-    <div className="container-message">
+    <div className="container-message border-top pt-3">
       <div className="mb-3 div-message">
         <strong>{msg.sender?.username || 'Utilisateur inconnu'}</strong> —{' '}
         <small>{new Date(msg.createdAt).toLocaleTimeString([], {

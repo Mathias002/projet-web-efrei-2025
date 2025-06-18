@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLazyQuery, useMutation, gql } from '@apollo/client';
 
+// mutation pour créer une conversation
 const CREATE_CONVERSATION = gql`
   mutation CreateConversationSimple($participantId: String!, $creatorId: String!, $nom: String!) {
     createConversation(
@@ -13,6 +14,7 @@ const CREATE_CONVERSATION = gql`
   }
 `;
 
+// requête pour récupérer un utilisateur via son email
 const GET_USER_BY_EMAIL = gql`
   query GetUserByEmail($email: String!) {
     userByEmail(email: $email) {
@@ -50,7 +52,10 @@ function CreateConversation({ creatorId, onCreated }) {
 
   const [createConversation, { loading: loadingCreate, error: createError }] = useMutation(CREATE_CONVERSATION, {
     onCompleted: (data) => {
+      // met à jour la liste des conversations
       onCreated(data.createConversation);
+
+      // réinitialise le form
       setNom('');
       setEmail('');
       setParticipantId(null);
@@ -60,11 +65,15 @@ function CreateConversation({ creatorId, onCreated }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // check que les champs sont remplis
     if (!nom || !email) {
       setErrorMsg('Merci de saisir un nom et un email');
       return;
     }
     setErrorMsg('');
+
+    // recherche l'utilisateur
     getUserByEmail({ variables: { email } });
   };
 

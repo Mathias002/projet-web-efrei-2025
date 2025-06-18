@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 
+// mutation pour se connecter
 const LOGIN_USER = gql`
   mutation LoginUser($input: LoginInput!) {
     login(input: $input) {
@@ -22,7 +23,7 @@ function LoginForm({ onLogin }) {
   const [loginUser, { loading }] = useMutation(LOGIN_USER, {
     onCompleted: ({ login }) => {
       localStorage.setItem('token', login.access_token); // ✅ JWT stocké
-      onLogin(login.user); // ✅ passe l'user au parent
+      onLogin(login.user); // ✅ passe le user au parent
     },
     onError: (error) => {
       setErrorMsg(error.message);

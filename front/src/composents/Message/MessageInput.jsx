@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { gql, useMutation } from '@apollo/client';
 
+// mutation pour envoyer un message
 const SEND_MESSAGE = gql`
   mutation SendMessage($conversationId: String!, $senderId: String!, $content: String!) {
     sendMessage(
@@ -23,6 +24,7 @@ function MessageInput({ conversationId, senderId, onMessageSent }) {
 
     const handleSend = async (e) => {
         e.preventDefault();
+        // ignore les messages vides
         if (!content.trim()) return;
 
         try {
