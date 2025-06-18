@@ -27,8 +27,8 @@ jobs:
       rabbitmq:
         image: rabbitmq:3-management
         env:
-          RABBITMQ_DEFAULT_USER: devuser
-          RABBITMQ_DEFAULT_PASS: devpass
+          RABBITMQ_DEFAULT_USER: user
+          RABBITMQ_DEFAULT_PASS: password
         ports:
           - 5672:5672
           - 15672:15672
