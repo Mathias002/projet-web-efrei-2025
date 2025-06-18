@@ -90,6 +90,10 @@ jobs:
         name: codecov-umbrella
       continue-on-error: true
 
+    - name: Run nestJs project for Newman tests
+      run: npm run start:dev
+      working-directory: ./nestjs
+
     - name: Run Newman tests
       run: newman run ProjetWebQueries.postman_collection.json -e ProjetWebQueries.postman_collection.json
       working-directory: ./nestjs
