@@ -9,6 +9,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
 }): GQLConversation {
   return {
     id: prismaConversation.id,
+    // On transforme chaque participant Prisma en modèle GraphQL
     participants: prismaConversation.participantLinks.map(link => ({
       id: link.user.id,
       username: link.user.username,
@@ -18,6 +19,7 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
       updatedAt: link.user.updatedAt,
       deleted: link.user.deleted,
     })),
+    // On transforme chaque message Prisma en modèle GraphQL
     messages: prismaConversation.messages.map(msg => ({
       id: msg.id,
       content: msg.content,
@@ -29,6 +31,6 @@ export function mapToConversation(prismaConversation: PrismaConversation & {
     nom: prismaConversation.nom,
     createdBy: prismaConversation.createdBy,
     createdAt: prismaConversation.createdAt,
-    lastMessage: prismaConversation.lastMessage ?? undefined,
+    lastMessage: prismaConversation.lastMessage ?? undefined, // valeur par défaut si null
   };
 }

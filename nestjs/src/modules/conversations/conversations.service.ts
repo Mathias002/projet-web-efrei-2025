@@ -13,6 +13,7 @@ export class ConversationsService {
     private readonly prisma: PrismaService,
   ) { }
 
+  // Cherche toutes les conversations d’un utilisateur
   async findByUserId(userId: string) {
     const rawConversations = await this.prisma.conversation.findMany({
       where: {
@@ -33,9 +34,9 @@ export class ConversationsService {
     });
 
     return rawConversations.map(mapToConversation);
-
   }
 
+  // Cherche une conversation par son id
   async findById(id: string) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id },
@@ -50,10 +51,11 @@ export class ConversationsService {
     });
 
     return conversation ? mapToConversation(conversation) : null;
-
   }
 
+  // Crée une nouvelle conversation avec un créateur et un participant
   async create(input: CreateConversationInput, creatorId: string) {
+    // Vérifie que les utilisateurs existent
     const creator = await this.prisma.user.findUnique({ where: { id: creatorId } });
     const participant = await this.prisma.user.findUnique({ where: { id: input.participantId } });
 
@@ -61,34 +63,18 @@ export class ConversationsService {
       throw new Error('Creator or participant not found');
     }
 
-    // On vérifie si la conversation existe déjà entre ces deux utilisateurs spécifiques
+    // Vérifie s’il existe déjà une conversation entre ces deux utilisateurs
     const existing = await this.prisma.conversation.findFirst({
       where: {
         AND: [
-          // La conversation doit avoir exactement ces deux participants
-          {
-            participantLinks: {
-              some: {
-                userId: creatorId
-              }
-            }
-          },
-          {
-            participantLinks: {
-              some: {
-                userId: input.participantId
-              }
-            }
-          },
-          // Optionnel : s'assurer qu'il n'y a que 2 participants au total
-          // Décommentez les lignes suivantes si vous voulez cette contrainte
+          { participantLinks: { some: { userId: creatorId } } },
+          { participantLinks: { some: { userId: input.participantId } } },
+          // Pour forcer exactement 2 participants, décommenter la partie suivante
           /*
           {
             participantLinks: {
               none: {
-                userId: {
-                  notIn: [creatorId, input.participantId]
-                }
+                userId: { notIn: [creatorId, input.participantId] }
               }
             }
           }
@@ -96,18 +82,14 @@ export class ConversationsService {
         ]
       },
       include: {
-        participantLinks: {
-          include: {
-            user: true
-          }
-        },
+        participantLinks: { include: { user: true } },
         messages: true,
       },
     });
 
-    // si la conversation existe déjà on la return
     if (existing) return mapToConversation(existing);
 
+    // Création de la conversation
     const conversation = await this.prisma.conversation.create({
       data: {
         createdBy: creatorId,
@@ -116,6 +98,7 @@ export class ConversationsService {
       },
     });
 
+    // Création du message initial s’il y en a un
     if (input.initialMessage?.trim()) {
       await this.prisma.message.create({
         data: {
@@ -126,6 +109,7 @@ export class ConversationsService {
       });
     }
 
+    // Ajout des participants à la conversation
     await this.prisma.conversationParticipant.createMany({
       data: [
         { userId: creatorId, conversationId: conversation.id },
@@ -133,14 +117,11 @@ export class ConversationsService {
       ],
     });
 
+    // Récupère la conversation complète avec les participants et messages
     const fullConversation = await this.prisma.conversation.findUnique({
       where: { id: conversation.id },
       include: {
-        participantLinks: {
-          include: {
-            user: true,
-          }
-        },
+        participantLinks: { include: { user: true } },
         messages: true,
       },
     });
@@ -150,6 +131,5 @@ export class ConversationsService {
     }
 
     return mapToConversation(fullConversation);
-
   }
 }
