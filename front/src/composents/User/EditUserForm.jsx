@@ -41,15 +41,15 @@ export default function EditUserForm({ user, onSave, onClose = () => { } }) {
         variables: {
           userId: user.id,
           input: {
-            username,
-            email,
-            password: password || undefined, // si le mot de passe vide, on ne l’envoie pas
+            username: username || undefined,
+            email: email || undefined,
+            password: password || undefined,
           },
         },
+      }).then((res) => {
+        if (onSave) onSave(res.data.editUser); // renvoie les nouvelles infos
+        onClose();
       });
-
-      if (onSave) onSave();
-      onClose();
     } catch (err) {
       setErrorMsg('Une erreur est survenue.');
     }
