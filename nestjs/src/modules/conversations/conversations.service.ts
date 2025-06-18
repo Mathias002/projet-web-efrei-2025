@@ -11,7 +11,7 @@ export class ConversationsService {
 
   constructor(
     private readonly prisma: PrismaService,
-  ) {}
+  ) { }
 
   /**
    * Récupère toutes les conversations d'un utilisateur via son userId
@@ -70,24 +70,56 @@ export class ConversationsService {
    * @returns la conversation créée ou existante
    */
   async create(input: CreateConversationInput, creatorId: string) {
+<<<<<<< HEAD
     // Vérification que le créateur et le participant existent bien
     const creator = await this.prisma.user.findUnique({where: { id: creatorId } });
     const participant = await this.prisma.user.findUnique({where: { id: input.participantId } });
+=======
+    const creator = await this.prisma.user.findUnique({ where: { id: creatorId } });
+    const participant = await this.prisma.user.findUnique({ where: { id: input.participantId } });
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
 
-    if(!creator || !participant) {
+    if (!creator || !participant) {
       throw new Error('Creator or participant not found');
     }
 
+<<<<<<< HEAD
     // Vérifie si une conversation entre ces deux utilisateurs existe déjà
+=======
+    // On vérifie si la conversation existe déjà entre ces deux utilisateurs spécifiques
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
     const existing = await this.prisma.conversation.findFirst({
-      where : {
-        participantLinks: {
-          every: {
-            userId: {
-              in: [creatorId, input.participantId],
-            },
+      where: {
+        AND: [
+          // La conversation doit avoir exactement ces deux participants
+          {
+            participantLinks: {
+              some: {
+                userId: creatorId
+              }
+            }
           },
-        },
+          {
+            participantLinks: {
+              some: {
+                userId: input.participantId
+              }
+            }
+          },
+          // Optionnel : s'assurer qu'il n'y a que 2 participants au total
+          // Décommentez les lignes suivantes si vous voulez cette contrainte
+          /*
+          {
+            participantLinks: {
+              none: {
+                userId: {
+                  notIn: [creatorId, input.participantId]
+                }
+              }
+            }
+          }
+          */
+        ]
       },
       include: {
         participantLinks: {
@@ -99,19 +131,30 @@ export class ConversationsService {
       },
     });
 
+<<<<<<< HEAD
     // Si elle existe déjà, retourne cette conversation
     if(existing) return mapToConversation(existing);
     
     // Création d'une nouvelle conversation
+=======
+    // si la conversation existe déjà on la return
+    if (existing) return mapToConversation(existing);
+
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
     const conversation = await this.prisma.conversation.create({
       data: {
         createdBy: creatorId,
+        nom: input.nom,
         createdAt: new Date(),
       },
     });
 
+<<<<<<< HEAD
     // Si un message initial est présent et non vide, on le crée
     if(input.initialMessage?.trim()) {
+=======
+    if (input.initialMessage?.trim()) {
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
       await this.prisma.message.create({
         data: {
           content: input.initialMessage,
@@ -125,7 +168,7 @@ export class ConversationsService {
     await this.prisma.conversationParticipant.createMany({
       data: [
         { userId: creatorId, conversationId: conversation.id },
-        { userId: input.participantId, conversationId: conversation.id},
+        { userId: input.participantId, conversationId: conversation.id },
       ],
     });
 

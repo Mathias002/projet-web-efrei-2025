@@ -11,9 +11,14 @@ import { QueueModule } from './queue/queue.module';
 import { UsersModule } from './modules/users/user.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MessagesModule } from './modules/messages/messages.module';
+<<<<<<< HEAD
 import { PrismaModule } from '../prisma/prisma.module'
 //import { AuthModule } from './auth/auth.module';
 import { AuthModule } from './modules/auth/auth.module';
+=======
+import { AuthModule } from './modules/auth/auth.module';
+import { PrismaModule } from '../prisma/prisma.module';
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
 
 @Module({
   imports: [
@@ -25,10 +30,11 @@ import { AuthModule } from './modules/auth/auth.module';
       introspection: true, // Permet l'introspection du schéma
       sortSchema: true, // Trie le schéma pour une meilleure lisibilité
     }),
-    HealthModule, // Votre module health existant
+    HealthModule, 
     QueueModule,
     HealthModule,
     UsersModule,
+    AuthModule,
     ConversationsModule,
     MessagesModule,
     PrismaModule,

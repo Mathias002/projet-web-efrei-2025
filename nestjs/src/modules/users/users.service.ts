@@ -4,6 +4,10 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper';
 import { EditUserInput } from './dto/edit-user.input';
+<<<<<<< HEAD
+=======
+import { LoginInput } from '../login/login.input';
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -33,17 +37,44 @@ export class UsersService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
     return mapUser(user);
   }
 
+<<<<<<< HEAD
   /**
    * Trouve plusieurs utilisateurs par leurs identifiants
    * @param userIds - liste des identifiants utilisateurs
    * @throws erreur si certains utilisateurs ne sont pas trouvés
    * @returns liste des utilisateurs mappés
    */
+=======
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+        deleted: null,
+      },
+    });
+
+    // Retourne null si pas trouvé, sans lancer d'erreur
+    return user ? mapUser(user) : null;
+  }
+
+  async findByEmailOrThrow(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new Error('Sorry, impossible to find this user.');
+    }
+
+    return mapUser(user);
+  }
+
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   async findByIds(userIds: string[]) {
     const users = await this.prisma.user.findMany({
       where: {
@@ -52,10 +83,18 @@ export class UsersService {
       },
     });
 
+<<<<<<< HEAD
     if (users.length !== userIds.length) {
       throw new Error('Sorry impossible to find some of these users. Please try again.');
     }
     return users.map(mapUser);
+=======
+    if (users.length != userIds.length) {
+      throw new Error('Sorry, impossible to find some of these users. Please try again.');
+    }
+
+    return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   }
 
   /**
@@ -69,6 +108,7 @@ export class UsersService {
     const existing = await this.prisma.user.findFirst({
       where: { email: input.email },
     });
+<<<<<<< HEAD
     if (existing) {
       throw new Error('A user with the same email address already exists.');
     }
@@ -85,6 +125,33 @@ export class UsersService {
     });
 
     return mapUser(createdUser);
+=======
+
+    console.log(existing);
+
+    if (existing && !existing.deleted) {
+      throw new Error('A user with the same email adress already exists.');
+    }
+
+    if (existing) {
+      return this.prisma.user.update({
+        where: { id: existing.id },
+        data: {
+          username: input.username,
+          password: input.password,
+          deleted: null
+        },
+      });
+    }
+
+    return this.prisma.user.create({
+      data: {
+        username: input.username,
+        email: input.email,
+        password: input.password,
+      },
+    });
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   }
 
   /**
@@ -97,9 +164,10 @@ export class UsersService {
   async editUser(userId: string, input: EditUserInput) {
     const existingUser = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
+<<<<<<< HEAD
     // Vérifie si un autre utilisateur a déjà cet email
     const existingEmail = await this.prisma.user.findFirst({
       where: {
@@ -120,6 +188,43 @@ export class UsersService {
     });
 
     return mapUser(updatedUser);
+=======
+    if (input.email && input.email.trim() !== '') {
+      const existingEmail = await this.prisma.user.findFirst({
+        where: {
+          email: input.email,
+          NOT: { id: userId },
+        }
+      });
+
+      if (existingEmail) {
+        throw new Error('A user with the same email adress already exists.');
+      }
+    }
+
+    const data: Partial<typeof input> = {};
+
+    if (input.username?.trim()) {
+      data.username = input.username;
+    }
+
+    if (input.email?.trim()) {
+      data.email = input.email;
+    }
+
+    if (input.password?.trim()) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+      data.password = hashedPassword;
+    }
+
+    return this.prisma.user.update({
+      where: {
+        id: userId
+      },
+      data
+    });
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   }
 
   /**
@@ -131,7 +236,7 @@ export class UsersService {
   async deleteUser(userId: string) {
     const existingUser = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
     const deletedUser = await this.prisma.user.update({
@@ -139,6 +244,10 @@ export class UsersService {
       data: { deleted: new Date() }, // timestamp suppression
     });
 
+<<<<<<< HEAD
     return mapUser(deletedUser);
+=======
+    return mapUser(deleteUser);
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   }
 }

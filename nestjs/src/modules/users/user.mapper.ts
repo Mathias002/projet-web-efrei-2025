@@ -7,6 +7,7 @@ export function mapUser(prismaUser: PrismaUser): User {
     id: prismaUser.id,
     username: prismaUser.username,
     email: prismaUser.email,
+    password: prismaUser.password,
     createdAt: prismaUser.createdAt,
     updatedAt: prismaUser.updatedAt,
     deleted: prismaUser.deleted,

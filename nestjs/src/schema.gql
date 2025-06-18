@@ -2,17 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  access_token: String!
+  user: User!
+}
+
 type Conversation {
   createdAt: DateTime!
   createdBy: String!
   id: ID!
   lastMessage: DateTime
   messages: [Message!]
+  nom: String!
   participants: [User!]!
 }
 
 input CreateConversationInput {
   initialMessage: String
+  nom: String!
   participantId: String!
 }
 
@@ -30,6 +37,12 @@ scalar DateTime
 input EditMessageInput {
   messageId: String!
   newContent: String!
+}
+
+input EditUserInput {
+  email: String
+  password: String
+  username: String
 }
 
 type HealthCheckResponse {
@@ -61,8 +74,14 @@ type Mutation {
   deleteMessage(messageId: String!, userId: String!): Message!
   deleteUser(userId: String!): User!
   editMessage(input: EditMessageInput!, userId: String!): Message!
+<<<<<<< HEAD
   editUser(input: CreateUserInput!, userId: String!): User!
   login(input: LoginInput!): String!
+=======
+  editUser(input: EditUserInput!, userId: String!): User!
+  login(input: LoginInput!): AuthResponse!
+  register(input: RegisterInput!): AuthResponse!
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   sendMessage(input: SendMessageInput!): Message!
   signUp(input: SignUpInput!): String!
 }
@@ -71,10 +90,18 @@ type Query {
   conversation(id: String!): Conversation
   conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
+  me: User!
   user(id: String!): User!
+  userByEmail(email: String!): User!
   userConversations(userId: String!): [Conversation!]!
   users: [User!]!
   usersByIds(ids: [String!]!): User!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
 }
 
 input SendMessageInput {
@@ -94,6 +121,7 @@ type User {
   deleted: DateTime
   email: String!
   id: ID!
+  password: String!
   updatedAt: DateTime!
   username: String!
 }

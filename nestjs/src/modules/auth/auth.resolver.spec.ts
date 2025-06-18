@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthResolver } from './auth.resolver';
 
+<<<<<<< HEAD
 // Suite de tests pour le resolver d’authentification
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -15,6 +16,19 @@ describe('AuthResolver', () => {
   });
 
   // Test simple pour vérifier que le resolver est bien défini
+=======
+describe('AuthResolver', () => {
+  let resolver: AuthResolver;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [AuthResolver],
+    }).compile();
+
+    resolver = module.get<AuthResolver>(AuthResolver);
+  });
+
+>>>>>>> 1e3124800fecaf4def574e1c7c0265c449b23955
   it('should be defined', () => {
     expect(resolver).toBeDefined();
   });
