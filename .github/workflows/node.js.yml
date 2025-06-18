@@ -63,6 +63,12 @@ jobs:
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
 
+    - name: Run database push
+      run: npx prisma db push --force-reset
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+
     - name: Seed database (optional)
       run: npx prisma db seed
       working-directory: ./nestjs
