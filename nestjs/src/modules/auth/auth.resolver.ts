@@ -7,15 +7,21 @@ import { LoginInput } from './dto/login.input';
 export class AuthResolver {
   constructor(private authService: AuthService) {}
 
+  // Mutation GraphQL pour l'inscription d'un utilisateur
   @Mutation(() => String)
   async signUp(@Args('input') input: SignUpInput) {
+    // Appelle le service d'authentification pour créer un nouvel utilisateur
     const result = await this.authService.signUp(input);
+    // Retourne le token JWT généré après inscription
     return result.token;
   }
 
+  // Mutation GraphQL pour la connexion d'un utilisateur
   @Mutation(() => String)
   async login(@Args('input') input: LoginInput) {
+    // Appelle le service d'authentification pour vérifier les identifiants
     const result = await this.authService.login(input);
+    // Retourne le token JWT généré après connexion
     return result.token;
   }
 }

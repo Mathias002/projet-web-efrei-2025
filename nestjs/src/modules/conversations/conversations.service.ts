@@ -13,6 +13,11 @@ export class ConversationsService {
     private readonly prisma: PrismaService,
   ) {}
 
+  /**
+   * Récupère toutes les conversations d'un utilisateur via son userId
+   * @param userId - identifiant de l'utilisateur
+   * @returns liste des conversations mappées
+   */
   async findByUserId(userId: string) {
     const rawConversations = await this.prisma.conversation.findMany({
       where: {
@@ -32,10 +37,15 @@ export class ConversationsService {
       },
     });
 
+    // Transformation des données brutes vers le modèle Conversation
     return rawConversations.map(mapToConversation);
-
   }
 
+  /**
+   * Récupère une conversation par son identifiant
+   * @param id - identifiant de la conversation
+   * @returns conversation ou null si non trouvée
+   */
   async findById(id: string) {
     const conversation = await this.prisma.conversation.findUnique({
       where: { id },
@@ -50,10 +60,17 @@ export class ConversationsService {
     });
 
     return conversation ? mapToConversation(conversation) : null;
-
   }
 
+  /**
+   * Crée une nouvelle conversation entre le créateur et un participant,
+   * avec un message initial optionnel.
+   * @param input - données pour créer la conversation (participantId, initialMessage)
+   * @param creatorId - identifiant du créateur de la conversation
+   * @returns la conversation créée ou existante
+   */
   async create(input: CreateConversationInput, creatorId: string) {
+    // Vérification que le créateur et le participant existent bien
     const creator = await this.prisma.user.findUnique({where: { id: creatorId } });
     const participant = await this.prisma.user.findUnique({where: { id: input.participantId } });
 
@@ -61,7 +78,7 @@ export class ConversationsService {
       throw new Error('Creator or participant not found');
     }
 
-    // On vérifie si la conversation existe déjà
+    // Vérifie si une conversation entre ces deux utilisateurs existe déjà
     const existing = await this.prisma.conversation.findFirst({
       where : {
         participantLinks: {
@@ -82,9 +99,10 @@ export class ConversationsService {
       },
     });
 
-    // si la conversation existe déjà on la return
+    // Si elle existe déjà, retourne cette conversation
     if(existing) return mapToConversation(existing);
     
+    // Création d'une nouvelle conversation
     const conversation = await this.prisma.conversation.create({
       data: {
         createdBy: creatorId,
@@ -92,6 +110,7 @@ export class ConversationsService {
       },
     });
 
+    // Si un message initial est présent et non vide, on le crée
     if(input.initialMessage?.trim()) {
       await this.prisma.message.create({
         data: {
@@ -102,6 +121,7 @@ export class ConversationsService {
       });
     }
 
+    // Ajout des participants à la conversation
     await this.prisma.conversationParticipant.createMany({
       data: [
         { userId: creatorId, conversationId: conversation.id },
@@ -109,6 +129,7 @@ export class ConversationsService {
       ],
     });
 
+    // Rechargement de la conversation complète avec les relations
     const fullConversation = await this.prisma.conversation.findUnique({
       where: { id: conversation.id },
       include: {
@@ -126,6 +147,5 @@ export class ConversationsService {
     }
 
     return mapToConversation(fullConversation);
-
   }
 }

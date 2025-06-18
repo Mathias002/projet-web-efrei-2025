@@ -10,7 +10,6 @@ import { CreateConversationInput } from './dto/create-conversation.input';
  * Fournit les requêtes et mutations pour récupérer, créer des conversations
  * et résoudre les messages liés à une conversation.
  */
-
 @Resolver(() => Conversation)
 export class ConversationsResolver {
     constructor(
@@ -19,7 +18,6 @@ export class ConversationsResolver {
     ) { }
 
     // Récupère toutes les conversations d’un utilisateur via son id
-
     // 🧩 Paramètres :
     // - `userId: String!` → Id de l'utilisateur (**obligatoire**)
 
@@ -59,7 +57,6 @@ export class ConversationsResolver {
     }
 
     // Récupère une conversation via son id
-
     // 🧩 Paramètres :
     // - `conversationId: String!` → Id de la conversation (**obligatoire**)
 
@@ -99,11 +96,10 @@ export class ConversationsResolver {
     }
 
     // Créer une conversation entre deux utilisateur
-
     // 🧩 Paramètres :
     // - `participantId: String!` → Id du participant (**obligatoire**)
-    // - `creatorId: String!` → Id du créateur de la conversation) (**obligatoire**)
-    // - `initialMessage: String` → Contenu du message initial) (**optionel**)
+    // - `creatorId: String!` → Id du créateur de la conversation (**obligatoire**)
+    // - `initialMessage: String` → Contenu du message initial (**optionnel**)
 
     /**
      * 📌 Mutation GraphQL de test
@@ -149,7 +145,6 @@ export class ConversationsResolver {
     }
 
     // Résout le champ `messages` d’une conversation en récupérant ses messages associés
-
     @ResolveField(() => [Message])
     async messages(@Parent() conversation: Conversation): Promise<Message[]> {
         return this.messagesService.findByConversationId(conversation.id);
