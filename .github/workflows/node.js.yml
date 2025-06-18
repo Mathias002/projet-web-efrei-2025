@@ -105,6 +105,12 @@ jobs:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
 
+    - name: Create .env file
+      run: |
+        echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > .env
+      working-directory: nestjs
+
+
     - name: Run nestJs project for Newman tests
       env:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
