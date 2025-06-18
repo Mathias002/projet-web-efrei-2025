@@ -84,12 +84,18 @@ jobs:
         cat .env
       working-directory: nestjs
 
+    - name: Install wait-on
+      run: npm install --save-dev wait-on
+      working-directory: ./nestjs
+
 
     - name: Run nestJs project for Newman tests
       env:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
-      run: npm run start:dev
+      run: |
+        npm run start:dev  &
+        npx wait-on http://localhost:3000
       working-directory: ./nestjs
 
     - name: Run Newman tests
