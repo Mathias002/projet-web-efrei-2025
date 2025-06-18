@@ -9,10 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest      
-    
-    env:
-      BASE_URL: ${{ secrets.API_BASE_URL }}
-
+  
     
     services:
       postgres:
