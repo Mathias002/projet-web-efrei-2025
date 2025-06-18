@@ -11,7 +11,8 @@ import { QueueModule } from './queue/queue.module';
 import { UsersModule } from './modules/users/user.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { MessagesModule } from './modules/messages/messages.module';
-import { PrismaModule } from '../prisma/prisma.module'
+import { AuthModule } from './modules/auth/auth.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PrismaModule } from '../prisma/prisma.module'
     QueueModule,
     HealthModule,
     UsersModule,
+    AuthModule,
     ConversationsModule,
     MessagesModule,
     PrismaModule,

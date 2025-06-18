@@ -25,22 +25,24 @@ function ConversationList({ userId, selectedId, onSelect }) {
 
 
     return (
-        <div className="flex-grow-1 overflow-auto px-3 py-2">
+        <div className="flex-grow-1 overflow-auto py-2">
             {conversations.length === 0 ? (
                 <div className="text-muted text-center mt-3">Aucune conversation</div>
             ) : (
                 conversations.map((conv) => (
-                    <div className='d-flex justify-content-between'>
+                    <div 
+                        className='d-flex justify-content-between div-conv' 
+                        onClick={() => onSelect(conv.id)}
+                    >
                         <div
                             key={conv.id}
-                            className={`p-2 rounded mb-2 ${selectedId === conv.id ? 'bg-primary text-white' : 'bg-white text-dark'
-                                } shadow-sm`}
-                            onClick={() => onSelect(conv.id)}
-                            style={{ cursor: 'pointer' }}
+                            className={`p-2 rounded mb-2 weight-500`}
                         >
                             {conv.nom}
                         </div>
-                        <div>
+                        <div 
+                            className={`p-2 rounded mb-2 weight-500`}
+                        >
                             {new Date(conv.createdAt).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
                         </div>
                     </div>

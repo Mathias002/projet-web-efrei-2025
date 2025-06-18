@@ -1,0 +1,27 @@
+.div-conv{
+    cursor: pointer;
+    background-color: lightsteelblue;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    align-items: center;
+    transition: all ease-in-out 0.3s;
+}
+
+.div-conv:hover{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.weight-500{
+    font-weight: 500;
+}
+
+.input-message{
+    margin-bottom: 5.2rem;
+}
+
+.container-chat{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

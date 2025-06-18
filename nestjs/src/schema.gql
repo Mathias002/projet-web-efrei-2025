@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  access_token: String!
+  user: User!
+}
+
 type Conversation {
   createdAt: DateTime!
   createdBy: String!
@@ -70,7 +75,8 @@ type Mutation {
   deleteUser(userId: String!): User!
   editMessage(input: EditMessageInput!, userId: String!): Message!
   editUser(input: EditUserInput!, userId: String!): User!
-  loginUser(input: LoginInput!): User
+  login(input: LoginInput!): AuthResponse!
+  register(input: RegisterInput!): AuthResponse!
   sendMessage(input: SendMessageInput!): Message!
 }
 
@@ -78,11 +84,18 @@ type Query {
   conversation(id: String!): Conversation
   conversationMessages(conversationId: String!): [Message!]!
   healthCheck: HealthCheckResponse!
+  me: User!
   user(id: String!): User!
   userByEmail(email: String!): User!
   userConversations(userId: String!): [Conversation!]!
   users: [User!]!
   usersByIds(ids: [String!]!): User!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  username: String!
 }
 
 input SendMessageInput {

@@ -3,7 +3,9 @@ import { User } from '../../models/user';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { EditUserInput } from './dto/edit-user.input';
-import { LoginInput } from '../login/login.input';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
 
 /**
  * Resolver GraphQL pour la gestion des utilisateurs dans l'application de chat.
@@ -35,6 +37,12 @@ export class UsersResolver {
         return this.usersService.findAll();
     }
 
+    @Query(() => User)
+    @UseGuards(JwtAuthGuard)
+    async me(@CurrentUser() user: User): Promise<User> {
+        return user;
+    }
+    
     // Récupère un utilisateur via son id
 
     // 🧩 Paramètres :
@@ -204,12 +212,5 @@ export class UsersResolver {
         @Args('userId') userId: string,
     ): Promise<User> {
         return this.usersService.deleteUser(userId);
-    }
-
-    @Mutation(() => User, { nullable: true })
-    async loginUser(
-        @Args('input') input: LoginInput
-    ): Promise<User | null> {
-        return this.usersService.loginUser(input);
     }
 }
