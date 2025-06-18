@@ -1,6 +1,7 @@
 import ConversationList from '../Conversation/ConversationList';
 import CreateConversation from '../Conversation/CreateConversation';
 import EditUserForm from '../User/EditUserForm';
+import DeleteUser from '../User/DeleteUser';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
@@ -26,21 +27,21 @@ function ChatHome({ currentUser, onLogout }) {
   };
 
   const handleSaveUser = (updatedFields) => {
-    console.log('Modifications à envoyer au backend:', updatedFields);
     setShowEditUserModal(false);
+  }
 
-    const handleLogout = () => {
-      localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
-      onLogout();
-    };
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
+    onLogout();
+  };
 
-    return (
-      <div className="d-flex vh-100">
-        {/* Sidebar gauche */}
-        <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
-          <div className="p-3 border-bottom">
-            <h5>Conversations</h5>
-          </div>
+  return (
+    <div className="d-flex vh-100">
+      {/* Sidebar gauche */}
+      <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
+        <div className="p-3 border-bottom">
+          <h5>Conversations</h5>
+        </div>
 
           {/* Liste des conversations */}
           <div className="flex-grow-1 overflow-auto px-3">
@@ -51,52 +52,52 @@ function ChatHome({ currentUser, onLogout }) {
             />
           </div>
 
-          {/* Boutons en bas */}
-          <div className="p-3 border-top">
-            <Button
-              variant="primary"
-              className="w-100 mb-2"
-              onClick={() => setShowModal(true)}
-            >
-              ➕ Nouvelle conversation
-            </Button>
+        {/* Boutons en bas */}
+        <div className="p-3 border-top">
+          <Button
+            variant="primary"
+            className="w-100 mb-2"
+            onClick={() => setShowModal(true)}
+          >
+            ➕ Nouvelle conversation
+          </Button>
 
-            <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
-              👤 Gestion utilisateur
-            </Button>
-            <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
-              Déconnexion
-            </Button>
-            <Button variant="outline-secondary" className="w-100">
-              👤 Gestion du profil
-            </Button>
+          <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
+            👤 Gestion utilisateur
+          </Button>
+          <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
+            Déconnexion
+          </Button>
+          <Button variant="outline-secondary" className="w-100">
+            👤 Gestion du profil
+          </Button>
 
-            <button className="btn btn-danger w-100" onClick={handleLogout}>
-              🔓 Déconnexion
-            </button>
-          </div>
+          <button className="btn btn-danger w-100" onClick={handleLogout}>
+            🔓 Déconnexion
+          </button>
+        </div>
+      </div>
+
+      {/* Zone principale droite */}
+      <div className="flex-grow-1 d-flex flex-column">
+        <div className="flex-grow-1">
+          <Conversation conversationId={selectedConvId} />
         </div>
 
-        {/* Zone principale droite */}
-        <div className="flex-grow-1 d-flex flex-column">
-          <div className="flex-grow-1">
-            <Conversation conversationId={selectedConvId} />
-          </div>
-
-          {/* Formulaire d'envoi de message */}
-          {/* <div className="border-top p-3 bg-white">
-          <form className="d-flex">
-            <input
-              type="text"
-              className="form-control me-2"
-              placeholder="Tapez votre message..."
-            />
-            <button type="submit" className="btn btn-primary">
-              Envoyer
-            </button>
-          </form>
-        </div> */}
-        </div>
+        {/* Formulaire d'envoi de message */}
+        {/* <div className="border-top p-3 bg-white">
+        <form className="d-flex">
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder="Tapez votre message..."
+          />
+          <button type="submit" className="btn btn-primary">
+            Envoyer
+          </button>
+        </form>
+      </div> */}
+      </div>
 
         {/* Modal pour créer une conversation */}
         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
@@ -111,20 +112,27 @@ function ChatHome({ currentUser, onLogout }) {
           </Modal.Body>
         </Modal>
 
-        <Modal show={showEditUserModal} onHide={() => setShowEditUserModal(false)} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>Modifier l'utilisateur</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <EditUserForm
-              user={currentUser}
-              onSave={handleSaveUser}
-              onClose={() => setShowEditUserModal(false)}
-            />
-          </Modal.Body>
-        </Modal>
-      </div>
-    );
-  }
+      {/* Modal pour modifier les informations */}
+      <Modal show={showEditUserModal} onHide={() => setShowEditUserModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Modifier l'utilisateur</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <EditUserForm
+            user={currentUser}
+            onSave={handleSaveUser}
+            onClose={() => setShowEditUserModal(false)}
+          />
+          <DeleteUser
+            userId={currentUser.id}
+            onDeleted={() => {
+              alert('Utilisateur supprimé !');
+              onLogout();
+            }} />
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
 }
-  export default ChatHome;
+
+export default ChatHome;
