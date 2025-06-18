@@ -29,6 +29,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: cd nestjs/
+      run: cd nestjs/
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -37,42 +40,35 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-      working-directory: ./nestjs
 
     - name: Generate Prisma Client
       run: npx prisma generate
-      working-directory: ./nestjs
 
     - name: Run database migrations
       run: npx prisma migrate deploy
-      working-directory: ./nestjs
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
 
     - name: Seed database (optional)
       run: npx prisma db seed
-      working-directory: ./nestjs
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
       continue-on-error: true
 
     - name: Run unit tests
       run: npm run test
-      working-directory: ./nestjs
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
         NODE_ENV: test
 
     - name: Run e2e tests
       run: npm run test:e2e
-      working-directory: ./nestjs
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
         NODE_ENV: test
 
     - name: Run test coverage
       run: npm run test:cov
-      working-directory: ./nestjs
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
         NODE_ENV: test
@@ -87,4 +83,3 @@ jobs:
 
     - name: Run Newman tests
       run: newman run ProjetWebQueries.postman_collection.json -e ProjetWebQueries.postman_collection.json
-      working-directory: ./nestjs
