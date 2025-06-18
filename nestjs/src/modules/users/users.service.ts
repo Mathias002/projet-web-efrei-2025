@@ -39,16 +39,23 @@ export class UsersService {
 
   async findByEmail(email: string) {
     const user = await this.prisma.user.findUnique({
-      where: {
-        email: email,
-      },
+      where: { email },
+    });
+    
+    // Retourne null si pas trouvé, sans lancer d'erreur
+    return user ? mapUser(user) : null;
+  }
+
+  async findByEmailOrThrow(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
     });
 
     if (!user) {
       throw new Error('Sorry, impossible to find this user.');
     }
 
-    return user ? mapUser(user) : null;
+    return mapUser(user);
   }
 
   async findByIds(userIds: string[]) {
@@ -65,8 +72,6 @@ export class UsersService {
       throw new Error('Sorry, impossible to find some of these users. Please try again.');
     }
 
-    // console.log(users);
-
     return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
   }
 
@@ -81,14 +86,11 @@ export class UsersService {
       throw new Error('A user with the same email adress already exists.');
     }
 
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(input.password, saltRounds);
-
     return this.prisma.user.create({
       data: {
         username: input.username,
         email: input.email,
-        password: hashedPassword,
+        password: input.password,
       }, });
   }
 
@@ -161,20 +163,6 @@ export class UsersService {
     });
 
     return mapUser(deleteUser);
-  }
-
-  async loginUser(input: LoginInput): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: { email: input.email },
-    });
-
-    if (!user) return null;
-
-    const isValid = await bcrypt.compare(input.password, user.password);
-    if (!isValid) return null;
-
-    const { password, ...rest } = user;
-    return rest as User;
   }
 
 }

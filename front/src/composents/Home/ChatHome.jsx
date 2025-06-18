@@ -1,15 +1,19 @@
 import ConversationList from '../Conversation/ConversationList';
 import CreateConversation from '../Conversation/CreateConversation';
 import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap'; // Pense à installer react-bootstrap
+import { Modal, Button } from 'react-bootstrap';
+import { jwtDecode } from 'jwt-decode';
 
 function ChatHome({ currentUser, onLogout }) {
 
   const [selectedConvId, setSelectedConvId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  
-  const userId = "0d413f71-5986-42dc-a1ac-096b3b98629e";
+  const token = localStorage.getItem('token');
+
+  const decoded = jwtDecode(token);
+
+  const userId = decoded.sub;
 
   // Callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
@@ -18,10 +22,15 @@ function ChatHome({ currentUser, onLogout }) {
     setSelectedConvId(newConv.id); // optionnel : sélectionne directement la nouvelle conversation
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
+    onLogout();
+  };
+
   return (
     <div className="d-flex vh-100">
       {/* Sidebar gauche */}
-      <div className="d-flex flex-column border-end bg-light" style={{ width: '300px' }}>
+      <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
         <div className="p-3 border-bottom">
           <h5>Conversations</h5>
         </div>
@@ -37,17 +46,21 @@ function ChatHome({ currentUser, onLogout }) {
 
         {/* Boutons en bas */}
         <div className="p-3 border-top">
-          <Button 
-            variant="primary" 
-            className="w-100 mb-2" 
+          <Button
+            variant="primary"
+            className="w-100 mb-2"
             onClick={() => setShowModal(true)}
           >
             ➕ Nouvelle conversation
           </Button>
 
-          <Button variant="outline-secondary" className="w-100" onClick={onLogout}>
-            👤 Gestion utilisateur
+          <Button variant="outline-secondary" className="w-100">
+            👤 Gestion du profil
           </Button>
+
+          <button className="btn btn-danger w-100" onClick={handleLogout}>
+            🔓 Déconnexion
+          </button>
         </div>
       </div>
 
