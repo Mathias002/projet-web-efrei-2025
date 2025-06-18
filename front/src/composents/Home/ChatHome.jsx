@@ -1,8 +1,10 @@
 import ConversationList from '../Conversation/ConversationList';
 import CreateConversation from '../Conversation/CreateConversation';
 import EditUserForm from '../User/EditUserForm';
+import DeleteUser from '../User/DeleteUser';
 import React, { useState } from 'react';
-import { Modal, Button } from 'react-bootstrap'; // Pense à installer react-bootstrap
+import { Modal, Button } from 'react-bootstrap';
+import { jwtDecode } from 'jwt-decode';
 
 function ChatHome({ currentUser, onLogout }) {
 
@@ -10,8 +12,11 @@ function ChatHome({ currentUser, onLogout }) {
   const [showModal, setShowModal] = useState(false);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
 
-  
-  const userId = "0d413f71-5986-42dc-a1ac-096b3b98629e";
+  const token = localStorage.getItem('token');
+
+  const decoded = jwtDecode(token);
+
+  const userId = decoded.sub;
 
   // Callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
@@ -21,14 +26,18 @@ function ChatHome({ currentUser, onLogout }) {
   };
 
   const handleSaveUser = (updatedFields) => {
-    console.log('Modifications à envoyer au backend:', updatedFields);
     setShowEditUserModal(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
+    onLogout();
   };
 
   return (
     <div className="d-flex vh-100">
       {/* Sidebar gauche */}
-      <div className="d-flex flex-column border-end bg-light" style={{ width: '300px' }}>
+      <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
         <div className="p-3 border-bottom">
           <h5>Conversations</h5>
         </div>
@@ -44,19 +53,19 @@ function ChatHome({ currentUser, onLogout }) {
 
         {/* Boutons en bas */}
         <div className="p-3 border-top">
-          <Button 
-            variant="primary" 
-            className="w-100 mb-2" 
+          <Button
+            variant="primary"
+            className="w-100 mb-2"
             onClick={() => setShowModal(true)}
           >
             ➕ Nouvelle conversation
           </Button>
 
           <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
-            👤 Gestion utilisateur
+            👤 Gestion du profil
           </Button>
           <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
-            Déconnexion
+            🔓 Déconnexion
           </Button>
         </div>
       </div>
@@ -107,6 +116,7 @@ function ChatHome({ currentUser, onLogout }) {
         </Modal.Body>
       </Modal>
 
+      {/* Modal pour modifier les informations */}
       <Modal show={showEditUserModal} onHide={() => setShowEditUserModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Modifier l'utilisateur</Modal.Title>
@@ -117,6 +127,12 @@ function ChatHome({ currentUser, onLogout }) {
             onSave={handleSaveUser}
             onClose={() => setShowEditUserModal(false)}
           />
+          <DeleteUser
+            userId={currentUser.id}
+            onDeleted={() => {
+              alert('Utilisateur supprimé !');
+              onLogout();
+            }} />
         </Modal.Body>
       </Modal>
     </div>
