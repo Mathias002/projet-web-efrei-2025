@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 
+// mutation pour mettre à jour un message via son id
 export const UPDATE_MESSAGE = gql`
   mutation EditMessage($messageId: String!, $newContent: String!, $userId: String!) {
     editMessage(
@@ -21,7 +22,9 @@ function EditMessageButton({ message, currentUserId }) {
 
   const handleEdit = async () => {
     try {
+      // exécute la mutation avec les données nécessaires 
       await updateMessage({ variables: { userId: currentUserId, messageId: message.id, newContent: content } });
+      // quitte le mode édition
       setEditing(false);
     } catch (err) {
       console.error('Erreur modification :', err.message);

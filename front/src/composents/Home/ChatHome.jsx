@@ -21,11 +21,12 @@ function ChatHome({ currentUser, onLogout }) {
 
   // Callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
-    setShowModal(false);       
-    setSelectedConvId(newConv.id);
+    setShowModal(false); // ferme la popup
+    setSelectedConvId(newConv.id); // sélectionne directement la nouvelle conversation
   };
 
-  const handleSaveUser = (updatedFields) => {
+  // ferme la popup après sauvegarde
+  const handleSaveUser = () => {
     setShowEditUserModal(false);
   }
 
@@ -39,13 +40,13 @@ function ChatHome({ currentUser, onLogout }) {
       {/* Sidebar gauche */}
       <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
         <div className="p-3 border-bottom">
-          <h5>Conversations</h5>
+          <h5>Conversations de { currentUser.username }</h5>
         </div>
 
           {/* Liste des conversations */}
           <div className="flex-grow-1 overflow-auto px-3">
             <ConversationList
-              userId={userId} // à remplacer plus tard par l’ID dynamique du user connecté
+              userId={userId}
               selectedId={selectedConvId}
               onSelect={setSelectedConvId}
             />

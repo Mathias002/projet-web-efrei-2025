@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery, gql } from '@apollo/client';
 
-// ⚡️ Remplace cette query par celle réellement utilisée côté backend
+// requête pour récupérer toutes les conversations d'un user
 const GET_CONVERSATIONS = gql`
   query GetConversations($userId: String!) {
     userConversations(userId: $userId) {
@@ -31,11 +31,11 @@ function ConversationList({ userId, selectedId, onSelect }) {
             ) : (
                 conversations.map((conv) => (
                     <div 
-                        className='d-flex justify-content-between div-conv' 
+                        key={conv.id}
+                        className={`d-flex justify-content-between div-conv mb-2 ${conv.id === selectedId ? 'bg-primary text-white font-bold' : 'bg-light'}`} 
                         onClick={() => onSelect(conv.id)}
                     >
                         <div
-                            key={conv.id}
                             className={`p-2 rounded mb-2 weight-500`}
                         >
                             {conv.nom}

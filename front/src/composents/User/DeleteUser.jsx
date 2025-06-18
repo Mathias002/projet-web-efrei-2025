@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Modal, Button } from 'react-bootstrap';
 
+// mutation pour supprimer un utilisateur
 const DELETE_USER = gql`
   mutation DeletedUser($userId: String!) {
     deleteUser(userId: $userId) {
@@ -36,6 +37,7 @@ export default function DeleteUserButton({ userId, onDeleted }) {
         Supprimer
       </Button>
 
+      {/* modal pour confirmer la suppression de son compte */}
       <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Confirmer la suppression</Modal.Title>

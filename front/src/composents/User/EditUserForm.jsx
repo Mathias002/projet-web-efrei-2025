@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useMutation, gql } from '@apollo/client';
 import { Button } from 'react-bootstrap';
 
+// mutation pour modifier un utilisateur via son id
 const EDIT_USER = gql`
   mutation($userId: String!, $input: EditUserInput!) {
     editUser(userId: $userId, input: $input) {
@@ -24,7 +25,7 @@ export default function EditUserForm({ user, onSave, onClose = () => { } }) {
     onError: (error) => setErrorMsg(error.message),
   });
 
-  // charge les données utilisateur à l'ouverture
+  // charge les données de l'utilisateur à l'ouverture
   useEffect(() => {
     if (user) {
       setUsername(user.username );
@@ -42,7 +43,7 @@ export default function EditUserForm({ user, onSave, onClose = () => { } }) {
           input: {
             username,
             email,
-            password: password || undefined,
+            password: password || undefined, // si le mot de passe vide, on ne l’envoie pas
           },
         },
       });
