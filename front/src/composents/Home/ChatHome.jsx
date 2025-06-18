@@ -30,7 +30,7 @@ function ChatHome({ currentUser, onLogout }) {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
+    localStorage.removeItem('token'); 
     onLogout();
   };
 
@@ -64,7 +64,7 @@ function ChatHome({ currentUser, onLogout }) {
             <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
               👤 Gestion du profil
             </Button>
-            <Button variant="btn btn-danger w-100" className="w-100 mb-2" onClick={onLogout}>
+            <Button variant="btn btn-danger w-100" className="w-100 mb-2" onClick={handleLogout}>
               🔓 Déconnexion
             </Button>
           </div>
