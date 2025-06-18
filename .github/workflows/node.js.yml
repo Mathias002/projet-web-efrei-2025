@@ -67,6 +67,33 @@ jobs:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
       continue-on-error: true
 
+
+    - name: Debug ENV var
+      run: echo "JWT_SECRET is $JWT_SECRET"
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+
+    - name: Create .env file
+      run: |
+        echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > .env
+        ls
+      working-directory: nestjs
+
+
+    - name: Run nestJs project for Newman tests
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: npm run start:dev
+      working-directory: ./nestjs
+
+    - name: Run Newman tests
+      run: newman run ProjetWebQueries.postman_collection.json -e ProjetWebQueries.postman_collection.json
+      working-directory: ./nestjs
+
+
+
+
     - name: Run unit tests
       run: npm run test
       working-directory: ./nestjs
@@ -99,24 +126,4 @@ jobs:
         name: codecov-umbrella
       continue-on-error: true
 
-    - name: Debug ENV var
-      run: echo "JWT_SECRET is $JWT_SECRET"
-      env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
-
-    - name: Create .env file
-      run: |
-        echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > .env
-      working-directory: nestjs
-
-
-    - name: Run nestJs project for Newman tests
-      env:
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      run: npm run start:dev
-      working-directory: ./nestjs
-
-    - name: Run Newman tests
-      run: newman run ProjetWebQueries.postman_collection.json -e ProjetWebQueries.postman_collection.json
-      working-directory: ./nestjs
+    
