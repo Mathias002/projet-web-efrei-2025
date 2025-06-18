@@ -33,9 +33,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: ls 
-      run: ls
-
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -44,9 +41,7 @@ jobs:
         cache-dependency-path: './nestjs/package.json'
 
     - name: Install dependencies
-      run: |
-        ls 
-        npm i
+      run: npm i
       working-directory: ./nestjs
 
     - name: Generate Prisma Client

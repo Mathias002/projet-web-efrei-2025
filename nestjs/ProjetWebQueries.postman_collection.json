@@ -34,7 +34,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"health"
 							]
@@ -119,7 +119,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -165,7 +165,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -227,7 +227,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -288,7 +288,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -361,7 +361,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -507,7 +507,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -563,7 +563,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -611,7 +611,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -663,7 +663,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -738,7 +738,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -900,7 +900,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
@@ -973,7 +973,7 @@
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "5432",
 							"path": [
 								"graphql"
 							]
