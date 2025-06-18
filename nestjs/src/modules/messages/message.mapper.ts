@@ -1,6 +1,8 @@
 import { Message as GQLMessage } from '../../models/message';
 import { Message as PrismaMessage } from '@prisma/client';
 
+// Permet la transformation de l'objet PrismaMessage en un objet Message (graphQL)
+
 export function mapToMessage(prismaMessage: PrismaMessage): GQLMessage {
   return {
     id: prismaMessage.id,

@@ -13,11 +13,11 @@ export class MessageConsumer {
     private readonly messagesService: MessagesService, // Service pour gérer les messages
   ) {}
 
-  // Ce décorateur permet d'écouter les messages envoyés à RabbitMQ
+  // permet d'écouter les messages envoyés à RabbitMQ
   @RabbitSubscribe({
-    exchange: 'messaging.exchange',      // Nom de l'exchange
-    routingKey: 'message.created',       // Clé qui déclenche cette méthode
-    queue: 'message.processing',         // Nom de la file à écouter
+    exchange: 'messaging.exchange',      // exchange
+    routingKey: 'message.created',       // Clé qui déclenche la méthode
+    queue: 'message.processing',         // Nom de la queue
   })
   async handleMessageCreated(payload: MessageQueuePayload) {
     this.logger.log(`Message reçu : de l'utilisateur ${payload.senderId} vers la conversation ${payload.conversationId}`);

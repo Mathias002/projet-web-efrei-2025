@@ -4,7 +4,6 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
 import { EditUserInput } from './dto/edit-user.input';
-import { LoginInput } from '../login/login.input';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -13,6 +12,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
   ) { }
 
+  // permet de récupérer tout les utilisateur de la base de données 
   async findAll() {
     const users = await this.prisma.user.findMany({
       where: {
@@ -23,6 +23,7 @@ export class UsersService {
     return users.map(mapUser);
   }
 
+  // permet de récupérer un user via son id
   async findById(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: {
@@ -37,6 +38,7 @@ export class UsersService {
     return user ? mapUser(user) : null;
   }
 
+  // permet de récupérer un user via son email
   async findByEmail(email: string) {
     const user = await this.prisma.user.findFirst({
       where: {
@@ -49,6 +51,7 @@ export class UsersService {
     return user ? mapUser(user) : null;
   }
 
+  // permet de récupérer un user via son email et retourne une exception si il existe déjà
   async findByEmailOrThrow(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
@@ -61,6 +64,7 @@ export class UsersService {
     return mapUser(user);
   }
 
+  // permet de récupérer plusieurs user via un tableau d'id (non fonctionnel)
   async findByIds(userIds: string[]) {
     const users = await this.prisma.user.findMany({
       where: {
@@ -78,6 +82,7 @@ export class UsersService {
     return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
   }
 
+  // permet de créer un utilisateur en base de données
   async createUser(input: CreateUserInput) {
     const existing = await this.prisma.user.findFirst({
       where: {
@@ -111,6 +116,7 @@ export class UsersService {
     });
   }
 
+  // permet de modifier un utilisateur 
   async editUser(userId: string, input: EditUserInput) {
     const existingUser = await this.prisma.user.findFirst({
       where: {
@@ -159,6 +165,7 @@ export class UsersService {
     });
   }
 
+  // permet de supprimer un utilisateur 
   async deleteUser(userId: string) {
     const existingUser = await this.prisma.user.findFirst({
       where: {

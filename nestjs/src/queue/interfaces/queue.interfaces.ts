@@ -1,5 +1,5 @@
 
-// les payloads
+// Interface representant la structure du message envoyé à la queue rabittMQ
 
 export interface MessageQueuePayload {
   tempId?: string;

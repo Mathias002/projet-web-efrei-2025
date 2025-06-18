@@ -69,16 +69,6 @@ export class ConversationsService {
         AND: [
           { participantLinks: { some: { userId: creatorId } } },
           { participantLinks: { some: { userId: input.participantId } } },
-          // Pour forcer exactement 2 participants, décommenter la partie suivante
-          /*
-          {
-            participantLinks: {
-              none: {
-                userId: { notIn: [creatorId, input.participantId] }
-              }
-            }
-          }
-          */
         ]
       },
       include: {

@@ -2,6 +2,8 @@ import React from 'react';
 import EditMessageButton from './EditMessageButton';
 import DeleteMessageButton from './DeleteMessageButton';
 
+// Composant représentant les messages (contenu, expediteur, 
+// heure de reception, bouton de modification et de suppression)
 function MessageItem({ msg, currentUserId, refetchMessages }) {
   const isMine = msg.sender?.id === currentUserId;
 

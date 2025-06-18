@@ -15,6 +15,7 @@ export class MessagesService {
     private readonly queueService: QueueService,
   ) {}
 
+  // récupère les messages d'une conversation via son ID
   async findByConversationId(conversationId: string): Promise<Message[]> {
     const rawMessages = await this.prisma.message.findMany({
       where: {
@@ -29,6 +30,7 @@ export class MessagesService {
     return rawMessages.map(mapToMessage);
   }
 
+  // récupère un message via son ID
   async findById(id: string): Promise<Message | null> {
     const message = await this.prisma.message.findUnique({
       where: { id }
@@ -37,9 +39,8 @@ export class MessagesService {
     return message ? mapToMessage(message) : null;
   }
 
+  // Envoie un message dans une conversation
   async send(input: SendMessageInput): Promise<Message> {
-    
-    // validation sur l'auth du user
 
     /**
      * creation d'un id temporaire pour le passage dans la queue 
@@ -55,6 +56,7 @@ export class MessagesService {
       timestamp: new Date(),
     };
 
+    // publication du message dans la queue
     await this.queueService.publishMessage(payload);
 
     return {
@@ -69,6 +71,7 @@ export class MessagesService {
 
   }
 
+  // permet d'insérer le message reçu depuis la queue dans la bdd postgre
   async handleQueueMessage(payload: MessageQueuePayload): Promise <Message> {
     
     // On vérifie que la conversation existe
@@ -121,6 +124,7 @@ export class MessagesService {
     return mapToMessage(createdMessage);
   }
 
+  // permet la modification d'un message 
   async editMessage(input: EditMessageInput, userId: string): Promise<Message> {
 
     const message = await this.prisma.message.findUnique({
@@ -150,6 +154,7 @@ export class MessagesService {
 
   }
 
+  // permet de supprimer en soft delete un message 
   async deleteMessage(messageId: string, userId: string) {
 
     const message = await this.prisma.message.findUnique({

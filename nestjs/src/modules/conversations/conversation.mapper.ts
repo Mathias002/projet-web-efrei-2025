@@ -1,7 +1,7 @@
 import { Conversation as GQLConversation } from '../../models/conversation';
-import { User as GQLUser } from '../../models/user';
-import { Message as GQLMessage } from '../../models/message';
 import { Conversation as PrismaConversation, Message, User } from '@prisma/client';
+
+// Permet la transformation de l'objet PrismaConversation en un objet Conversation (graphQL)
 
 export function mapToConversation(prismaConversation: PrismaConversation & {
   participantLinks: { user: User }[];
