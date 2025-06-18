@@ -56,8 +56,10 @@
 								"exec": [
 									"const userNameSent = \"testeu\";",
 									"const emailSent = \"testeu@test.test\";",
+									"const passwordSent = \"testeuuuu\";",
 									"pm.globals.set(\"userNameSent\", userNameSent);",
-									"pm.globals.set(\"emailSent\", emailSent); "
+									"pm.globals.set(\"emailSent\", emailSent); ",
+									"pm.globals.set(\"passwordSent\", passwordSent);"
 								],
 								"type": "text/javascript",
 								"packages": {}
@@ -109,8 +111,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation createUser($username: String!, $email: String!){\n  createUser(\n    input: {\n    username: $username\n    email: $email\n  \t}\n  ) {\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n}",
-								"variables": "{\n  \"username\": \"{{userNameSent}}\",\n  \"email\": \"{{emailSent}}\"\n}"
+								"query": "mutation createUser($username: String!, $email: String!, $password: String!){\n  createUser(\n    input: {\n    username: $username\n    email: $email\n    password: $password\n  \t}\n  ) {\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n  \n}",
+								"variables": "{\n  \"username\": \"{{userNameSent}}\",\n  \"email\": \"{{emailSent}}\",\n  \"password\": \"{{passwordSent}}\"\n}"
 							}
 						},
 						"url": {
@@ -383,8 +385,10 @@
 								"exec": [
 									"const initialMessage = \"Salut, c'est un test !\";",
 									"pm.globals.set(\"initialMessage\", initialMessage);",
+									"const nomConversation = \"nomConversation\";",
+									"pm.globals.set(\"nomConversation\", nomConversation);",
 									"pm.environment.set(\"baseUrl\", \"http://localhost:3000\");",
-									"function createUser(username, email, callback) {",
+									"function createUser(username, email, password, callback) {",
 									"    pm.sendRequest({",
 									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\",",
 									"        method: 'POST',",
@@ -395,10 +399,11 @@
 									"            mode: 'raw',",
 									"            raw: JSON.stringify({",
 									"                query: `",
-									"                    mutation createUser($username: String!, $email: String!) {",
+									"                    mutation createUser($username: String!, $email: String!, $password: String!) {",
 									"                        createUser(input: {",
 									"                            username: $username",
 									"                            email: $email",
+									"                            password: $password",
 									"                        }) {",
 									"                            id",
 									"                            username",
@@ -411,7 +416,8 @@
 									"                `,",
 									"                variables: {",
 									"                    username: username,",
-									"                    email: email",
+									"                    email: email,",
+									"                    password: password",
 									"                }",
 									"            })",
 									"        }",
@@ -419,7 +425,7 @@
 									"}",
 									"",
 									"// Create first user",
-									"createUser(\"testUser1\", \"user1@test.com\", function (err, response) {",
+									"createUser(\"testUser1\", \"user1@test.com\", \"password\", function (err, response) {",
 									"    if (err) {",
 									"        console.log(\"Error creating user 1:\", err);",
 									"        return;",
@@ -431,7 +437,7 @@
 									"    // console.log(\"Created User 1 ID:\", user1Id);",
 									"    ",
 									"    // Create second user after first one is created",
-									"    createUser(\"testUser2\", \"user2@test.com\", function (err, response) {",
+									"    createUser(\"testUser2\", \"user2@test.com\", \"password\", function (err, response) {",
 									"        if (err) {",
 									"            console.log(\"Error creating user 2:\", err);",
 									"            return;",
@@ -497,8 +503,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation createConversation($creatorId: String!, $participantId: String!, $initialMessage: String!){\n  createConversation(\n    input: {\n      participantId: $participantId,\n      initialMessage: $initialMessage\n    }, \n    creatorId: $creatorId\n  ){\n    id\n    participants{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    messages{\n      id\n      content\n      senderId\n      createdAt\n      updatedAt\n      deleted\n    }\n    createdBy\n    createdAt\n    lastMessage\n  }\n}",
-								"variables": "{\n  \"creatorId\": \"{{userId1}}\",\n  \"participantId\": \"{{userId2}}\",\n  \"initialMessage\": \"{{initialMessage}}\"\n}"
+								"query": "mutation createConversation($creatorId: String!, $participantId: String!, $initialMessage: String!, $nom: String!){\n  createConversation(\n    input: {\n      participantId: $participantId,\n      initialMessage: $initialMessage,\n      nom: $nom\n    }, \n    creatorId: $creatorId\n  ){\n    id\n    participants{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    messages{\n      id\n      content\n      senderId\n      createdAt\n      updatedAt\n      deleted\n    }\n    createdBy\n    createdAt\n    lastMessage\n  }\n}",
+								"variables": "{\n  \"creatorId\": \"{{userId1}}\",\n  \"participantId\": \"{{userId2}}\",\n  \"initialMessage\": \"{{initialMessage}}\",\n  \"nom\": \"{{nomConversation}}\"\n}"
 							}
 						},
 						"url": {
