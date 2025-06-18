@@ -29,8 +29,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: cd nestjs/
-      run: cd nestjs/
+    - name: ls 
+      run: ls
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
