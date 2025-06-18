@@ -9,8 +9,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest      
-  
-    
+
     services:
       postgres:
         image: postgres:16
@@ -90,7 +89,14 @@ jobs:
         name: codecov-umbrella
       continue-on-error: true
 
+    - name: Debug ENV var
+      run: echo "JWT_SECRET is $JWT_SECRET"
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
     - name: Run nestJs project for Newman tests
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
       run: npm run start:dev
       working-directory: ./nestjs
 
