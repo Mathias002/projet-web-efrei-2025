@@ -2,6 +2,10 @@ import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { User } from '../../models/user';
 import { UsersService } from './users.service';
 import { CreateUserInput } from './dto/create-user.input';
+import { EditUserInput } from './dto/edit-user.input';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../auth/current-user.decorator';
 
 /**
  * Resolver GraphQL pour la gestion des utilisateurs dans l'application de chat.
@@ -33,6 +37,12 @@ export class UsersResolver {
         return this.usersService.findAll();
     }
 
+    @Query(() => User)
+    @UseGuards(JwtAuthGuard)
+    async me(@CurrentUser() user: User): Promise<User> {
+        return user;
+    }
+    
     // Récupère un utilisateur via son id
 
     // 🧩 Paramètres :
@@ -57,6 +67,32 @@ export class UsersResolver {
         @Args('id') id: string
     ): Promise<User | null> {
         return this.usersService.findById(id);
+    }
+
+    // Récupère un utilisateur via son email
+
+    // 🧩 Paramètres :
+    // - `email: String!` → Email de l'utilisateur (**obligatoire**)
+
+    /**
+     * 📌 Requête GraphQL de test :
+     * 
+     * query GetUserByEmail {
+     *   user(email: "email") {
+     *     id
+     *     username
+     *     email
+     *     createdAt
+     *     updatedAt
+     *     deleted
+     *   }
+     * }
+     */
+    @Query(() => User)
+    async userByEmail(
+        @Args('email') email: string
+    ): Promise<User | null> {
+        return this.usersService.findByEmail(email);
     }
 
     // Récupère plusieurs utilisateurs via une liste d'ids
@@ -147,7 +183,7 @@ export class UsersResolver {
     @Mutation(() => User)
     async editUser(
         @Args('userId') userId: string,
-        @Args('input') input: CreateUserInput,
+        @Args('input') input: EditUserInput,
     ): Promise<User> {
         return this.usersService.editUser(userId, input);
     }
@@ -177,5 +213,4 @@ export class UsersResolver {
     ): Promise<User> {
         return this.usersService.deleteUser(userId);
     }
-
 }

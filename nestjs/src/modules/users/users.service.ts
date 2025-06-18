@@ -4,6 +4,8 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateUserInput } from './dto/create-user.input';
 import { mapUser } from './user.mapper'
 import { EditUserInput } from './dto/edit-user.input';
+import { LoginInput } from '../login/login.input';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -29,10 +31,31 @@ export class UsersService {
     });
 
     if (!user) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
     return user ? mapUser(user) : null;
+  }
+
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    
+    // Retourne null si pas trouvé, sans lancer d'erreur
+    return user ? mapUser(user) : null;
+  }
+
+  async findByEmailOrThrow(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new Error('Sorry, impossible to find this user.');
+    }
+
+    return mapUser(user);
   }
 
   async findByIds(userIds: string[]) {
@@ -46,13 +69,10 @@ export class UsersService {
     });
 
     if (users.length != userIds.length) {
-      throw new Error('Sorry impossible to find some of these users. Please try again.');
+      throw new Error('Sorry, impossible to find some of these users. Please try again.');
     }
 
-    // console.log(users);
-
     return users.map(mapUser); // error return "Cannot return null for non-nullable field User.id."
-
   }
 
   async createUser(input: CreateUserInput) {
@@ -63,18 +83,15 @@ export class UsersService {
     });
 
     if (existing) {
-      throw new Error('A user with the same email adress already exist.');
+      throw new Error('A user with the same email adress already exists.');
     }
 
-    const createdUser = await this.prisma.user.create({
+    return this.prisma.user.create({
       data: {
         username: input.username,
-        email: input.email
-      },
-    });
-
-    return mapUser(createdUser);
-
+        email: input.email,
+        password: input.password,
+      }, });
   }
 
   async editUser(userId: string, input: EditUserInput) {
@@ -85,31 +102,44 @@ export class UsersService {
     });
 
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
-    const existingEmail = await this.prisma.user.findFirst({
-      where: {
-        email: input.email,
+    if (input.email && input.email.trim() !== '') {
+      const existingEmail = await this.prisma.user.findFirst({
+        where: {
+          email: input.email,
+          NOT: { id: userId },
+        }
+      });
+
+      if (existingEmail) {
+        throw new Error('A user with the same email adress already exists.');
       }
-    });
-
-    if (existingEmail) {
-      throw new Error('A user with the same email adress already exist.');
     }
 
-    const editUser = await this.prisma.user.update({
+    const data: Partial<typeof input> = {};
+
+    if (input.username?.trim()) {
+      data.username = input.username;
+    }
+
+    if (input.email?.trim()) {
+      data.email = input.email;
+    }
+
+    if (input.password?.trim()) {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(input.password, saltRounds);
+      data.password = hashedPassword;
+    }
+
+    return this.prisma.user.update({
       where: {
         id: userId
       },
-      data: {
-        username: input.username,
-        email: input.email
-      },
+      data
     });
-
-    return mapUser(editUser);
-
   }
 
   async deleteUser(userId: string) {
@@ -120,7 +150,7 @@ export class UsersService {
     });
 
     if (!existingUser) {
-      throw new Error('Sorry impossible to find this user.');
+      throw new Error('Sorry, impossible to find this user.');
     }
 
     const deleteUser = await this.prisma.user.update({
@@ -133,7 +163,6 @@ export class UsersService {
     });
 
     return mapUser(deleteUser);
-
   }
 
 }
