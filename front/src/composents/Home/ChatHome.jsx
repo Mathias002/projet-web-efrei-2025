@@ -4,7 +4,7 @@ import EditUserForm from '../User/EditUserForm';
 import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { jwtDecode } from 'jwt-decode';
-import Conversation from '../Conversation/ConversationDetails';
+import ConversationDetails from '../Conversation/ConversationDetails';
 
 function ChatHome({ currentUser, onLogout }) {
 
@@ -20,17 +20,16 @@ function ChatHome({ currentUser, onLogout }) {
 
   // Callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
-    // Ici tu peux rafraîchir ta liste de conversations ou ajouter la conversation au state
-    setShowModal(false);       // ferme la popup
-    setSelectedConvId(newConv.id); // optionnel : sélectionne directement la nouvelle conversation
+    setShowModal(false);       
+    setSelectedConvId(newConv.id);
   };
 
   const handleSaveUser = (updatedFields) => {
     console.log('Modifications à envoyer au backend:', updatedFields);
     setShowEditUserModal(false);
-
+  }
     const handleLogout = () => {
-      localStorage.removeItem('token'); // ou sessionStorage.removeItem('token');
+      localStorage.removeItem('token');
       onLogout();
     };
 
@@ -62,25 +61,18 @@ function ChatHome({ currentUser, onLogout }) {
             </Button>
 
             <Button variant="outline-secondary" className="w-100 mb-2" onClick={() => setShowEditUserModal(true)}>
-              👤 Gestion utilisateur
-            </Button>
-            <Button variant="outline-secondary" className="w-100 mb-2" onClick={onLogout}>
-              Déconnexion
-            </Button>
-            <Button variant="outline-secondary" className="w-100">
               👤 Gestion du profil
             </Button>
-
-            <button className="btn btn-danger w-100" onClick={handleLogout}>
+            <Button variant="btn btn-danger w-100" className="w-100 mb-2" onClick={onLogout}>
               🔓 Déconnexion
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Zone principale droite */}
         <div className="flex-grow-1 d-flex flex-column">
           <div className="flex-grow-1">
-            <Conversation conversationId={selectedConvId} />
+            <ConversationDetails conversationId={selectedConvId} />
           </div>
 
           {/* Formulaire d'envoi de message */}
@@ -126,5 +118,5 @@ function ChatHome({ currentUser, onLogout }) {
       </div>
     );
   }
-}
+
   export default ChatHome;

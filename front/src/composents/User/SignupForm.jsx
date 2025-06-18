@@ -15,6 +15,7 @@ const REGISTER_USER = gql`
 `;
 
 function SignupForm({ onSignupSuccess }) {
+
   const [form, setForm] = useState({ username: '', email: '', password: '' });
   const [errorMsg, setErrorMsg] = useState('');
 

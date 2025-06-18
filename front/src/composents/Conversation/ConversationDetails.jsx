@@ -4,6 +4,7 @@ import React from 'react';
 import { gql, useQuery } from '@apollo/client';
 import MessageInput from '../Message/MessageInput';
 import { jwtDecode } from 'jwt-decode';
+import MessageItem from '../Message/MessageItem';
 
 const GET_CONVERSATION_BY_ID = gql`
   query GetConversationById($id: String!) {
@@ -24,8 +25,8 @@ const GET_CONVERSATION_BY_ID = gql`
   }
 `;
 
-function Conversation({ conversationId }) {
-  const { data, loading, error } = useQuery(GET_CONVERSATION_BY_ID, {
+function ConversationDetails({ conversationId }) {
+  const { data, loading, error, refetch } = useQuery(GET_CONVERSATION_BY_ID, {
     variables: { id: conversationId },
     skip: !conversationId,
   });
@@ -37,7 +38,8 @@ function Conversation({ conversationId }) {
   const conversation = data.conversation;
 
   const token = localStorage.getItem('token');
-  const { sub: senderId } = jwtDecode(token);
+  const decoded = token ? jwtDecode(token) : null;
+  const currentUserId = decoded?.sub;
 
   const handleNewMessage = (newMessage) => {
     setMessages((prevMessages) => [...prevMessages, newMessage]);
@@ -52,22 +54,23 @@ function Conversation({ conversationId }) {
             <p className="text-muted">Aucun message</p>
           ) : (
             conversation.messages.map((msg) => (
-              <div key={msg.id} className="mb-3">
-                <strong>{msg.sender?.username || 'Utilisateur inconnu'}</strong> —{' '}
-                <small>{new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
-                <div>{msg.content}</div>
-              </div>
+              <MessageItem
+                key={msg.id}
+                msg={msg}
+                currentUserId={currentUserId}
+                refetchMessages={refetch}
+              />
             ))
           )}
         </div>
       </div>
       <MessageInput
         conversationId={conversationId}
-        senderId={senderId}
+        senderId={currentUserId}
         onMessageSent={handleNewMessage}
       />
     </div>
   );
 }
 
-export default Conversation;
+export default ConversationDetails;
