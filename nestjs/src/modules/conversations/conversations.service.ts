@@ -3,7 +3,7 @@ import { Conversation } from '../../models/conversation';
 import { UsersService } from '../users/users.service';
 import { CreateConversationInput } from './dto/create-conversation.input';
 import { QueueService } from '../../queue/queue.service';
-import { PrismaService } from 'prisma/prisma.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 import { mapToConversation } from './conversation.mapper';
 
 @Injectable()

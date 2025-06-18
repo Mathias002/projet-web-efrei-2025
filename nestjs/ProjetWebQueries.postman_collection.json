@@ -1,0 +1,987 @@
+{
+	"info": {
+		"_postman_id": "aab1bd0e-2818-4cae-8fc3-fd255cb2689e",
+		"name": "ProjetWebQueries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45528575"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "GetHealth",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/health",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "OK_CreateUser",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const userNameSent = \"testeu\";",
+									"const emailSent = \"testeu@test.test\";",
+									"pm.globals.set(\"userNameSent\", userNameSent);",
+									"pm.globals.set(\"emailSent\", emailSent); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Created user has correct username and email\", function () {",
+									"    const response = pm.response.json();",
+									"    ",
+									"    pm.expect(response).to.not.have.property(\"errors\");",
+									"    ",
+									"    pm.expect(response.data).to.have.property(\"createUser\");",
+									"    const createdUser = response.data.createUser;",
+									"    ",
+									"    const expectedUsername = pm.globals.get(\"userNameSent\");",
+									"    const expectedEmail = pm.globals.get(\"emailSent\");",
+									"    ",
+									"    pm.expect(createdUser.username).to.equal(expectedUsername);",
+									"    pm.expect(createdUser.email).to.equal(expectedEmail);",
+									"});",
+									"",
+									"pm.test(\"Save created user ID for future tests\", function () {",
+									"    const response = pm.response.json();",
+									"    const createdUser = response.data.createUser;",
+									"    ",
+									"    // Save user infos for later tests",
+									"    pm.globals.set(\"createdUserId\", createdUser.id);",
+									"    pm.globals.set(\"createdUsername\", createdUser.username);",
+									"    pm.globals.set(\"createdUserEmail\", createdUser.email);",
+									"    ",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createUser($username: String!, $email: String!){\n  createUser(\n    input: {\n    username: $username\n    email: $email\n  \t}\n  ) {\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n}",
+								"variables": "{\n  \"username\": \"{{userNameSent}}\",\n  \"email\": \"{{emailSent}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_getUsers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains a list of users\", function(){",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.have.property(\"users\");",
+									"    pm.expect(response.data.users).to.be.an(\"array\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query GetAllUsers {\n  users{\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_getUserById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returned user ID matches requested ID\", function () {",
+									"    const response = pm.response.json();",
+									"    const user = response.data.user;",
+									"    ",
+									"    const requestedId = pm.globals.get(\"createdUserId\");",
+									"    ",
+									"    pm.expect(user).to.exist;",
+									"    pm.expect(user.id).to.equal(requestedId);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const userIdToQuery = pm.globals.get(\"createdUserId\");",
+									"pm.globals.set(\"requestedUserId\", userIdToQuery);",
+									"pm.globals.set(\"userId\", userIdToQuery); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query($userId: String!){\n  user(id: $userId){\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n}",
+								"variables": "{\n  \"userId\": \"{{createdUserId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_UpdateUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"User has been modified correctly\", function (){",
+									"    const response = pm.response.json();",
+									"    const updatedUser = response.data.editUser;",
+									"",
+									"    pm.expect(updatedUser.username).to.equal(pm.globals.get(\"userNameEdited\"));",
+									"    pm.expect(updatedUser.email).to.equal(pm.globals.get(\"emailEdited\"));",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const userNameSent = \"testeuEdited\";",
+									"const emailSent = \"testeuEdited@test.test\";",
+									"pm.globals.set(\"userNameEdited\", userNameSent);",
+									"pm.globals.set(\"emailEdited\", emailSent); "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation editUser($userId: String!, $editedUsername: String!, $editedEmail: String!){\n  editUser(\n    userId: $userId,\n    input:{\n      username: $editedUsername\n      email: $editedEmail\n    }\n  ){\n    id\n    username\n    email\n    createdAt\n    updatedAt\n    deleted\n  }\n}",
+								"variables": "{\n  \"userId\": \"{{createdUserId}}\",\n  \"editedUsername\": \"{{userNameEdited}}\",\n  \"editedEmail\": \"{{emailEdited}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_DeleteUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check if deleteUser is present in response\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.have.property('deleteUser');",
+									"    pm.expect(response.data.deleteUser).to.not.be.null;",
+									"});",
+									"",
+									"pm.test(\"Check if deleted field is a valid date\", function () {",
+									"    const response = pm.response.json();",
+									"    const deletedUser = response.data.deleteUser;",
+									"    ",
+									"    pm.expect(deletedUser).to.have.property('deleted');",
+									"    pm.expect(deletedUser.deleted).to.not.be.null;",
+									"    ",
+									"    const deletedDate = new Date(deletedUser.deleted);",
+									"    pm.expect(deletedDate).to.be.instanceOf(Date);",
+									"    pm.expect(deletedDate.toString()).to.not.equal('Invalid Date');",
+									"    ",
+									"    const isoRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;",
+									"    pm.expect(deletedUser.deleted).to.match(isoRegex);",
+									"});",
+									"",
+									"pm.test(\"Check if deletion timestamp is recent\", function () {",
+									"    const response = pm.response.json();",
+									"    const deletedUser = response.data.deleteUser;",
+									"    ",
+									"    const deletedDate = new Date(deletedUser.deleted);",
+									"    const now = new Date();",
+									"    const timeDifference = now - deletedDate;",
+									"    ",
+									"    // Check if deletion happened within the last 5 minutes (300000 ms)",
+									"    pm.expect(timeDifference).to.be.below(300000);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation DeletedUser($userId: String!) {\n     deleteUser(userId: $userId) {\n        id\n        username\n        email\n        createdAt\n        updatedAt\n        deleted\n     }\n   }",
+								"variables": "{\n  \"userId\": \"{{createdUserId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Conversations",
+			"item": [
+				{
+					"name": "OK_CreateConversation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const initialMessage = \"Salut, c'est un test !\";",
+									"pm.globals.set(\"initialMessage\", initialMessage);",
+									"pm.environment.set(\"baseUrl\", \"http://localhost:3000\");",
+									"function createUser(username, email, callback) {",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\",",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json',",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                query: `",
+									"                    mutation createUser($username: String!, $email: String!) {",
+									"                        createUser(input: {",
+									"                            username: $username",
+									"                            email: $email",
+									"                        }) {",
+									"                            id",
+									"                            username",
+									"                            email",
+									"                            createdAt",
+									"                            updatedAt",
+									"                            deleted",
+									"                        }",
+									"                    }",
+									"                `,",
+									"                variables: {",
+									"                    username: username,",
+									"                    email: email",
+									"                }",
+									"            })",
+									"        }",
+									"    }, callback);",
+									"}",
+									"",
+									"// Create first user",
+									"createUser(\"testUser1\", \"user1@test.com\", function (err, response) {",
+									"    if (err) {",
+									"        console.log(\"Error creating user 1:\", err);",
+									"        return;",
+									"    }",
+									"    ",
+									"    const user1Data = response.json();",
+									"    const user1Id = user1Data.data.createUser.id;",
+									"    pm.globals.set(\"userId1\", user1Id);",
+									"    // console.log(\"Created User 1 ID:\", user1Id);",
+									"    ",
+									"    // Create second user after first one is created",
+									"    createUser(\"testUser2\", \"user2@test.com\", function (err, response) {",
+									"        if (err) {",
+									"            console.log(\"Error creating user 2:\", err);",
+									"            return;",
+									"        }",
+									"        ",
+									"        const user2Data = response.json();",
+									"        const user2Id = user2Data.data.createUser.id;",
+									"        pm.globals.set(\"userId2\", user2Id);",
+									"        // console.log(\"Created User 2 ID:\", user2Id);",
+									"        ",
+									"        pm.globals.set(\"userIdsArray\", JSON.stringify([user1Id, user2Id]));",
+									"        ",
+									"    });",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Conversation has been created succesfully\", function (){",
+									"    const response = pm.response.json();",
+									"    const createConversation = response.data.createConversation;",
+									"",
+									"    pm.expect(response.data).to.have.property(\"createConversation\");",
+									"",
+									"    pm.expect(createConversation).to.have.property(\"id\");",
+									"    pm.globals.set(\"createdConversationId\", createConversation.id);",
+									"",
+									"});",
+									"",
+									"pm.test(\"Conversation has the correct initial message\", function (){",
+									"    const response = pm.response.json();",
+									"    const createConversation = response.data.createConversation;",
+									"",
+									"    pm.expect(createConversation).to.have.property(\"messages\");",
+									"    pm.expect(createConversation.messages).to.be.an('array');",
+									"    pm.expect(createConversation.messages).to.have.lengthOf.at.least(1);",
+									"",
+									"    const initialMessage = createConversation.messages[0];",
+									"    ",
+									"    pm.expect(initialMessage).to.have.property('content');",
+									"    pm.expect(initialMessage.content).to.equal(pm.globals.get(\"initialMessage\"));",
+									"    ",
+									"    console.log(`Initial message content: ${initialMessage.content}`);",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation createConversation($creatorId: String!, $participantId: String!, $initialMessage: String!){\n  createConversation(\n    input: {\n      participantId: $participantId,\n      initialMessage: $initialMessage\n    }, \n    creatorId: $creatorId\n  ){\n    id\n    participants{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    messages{\n      id\n      content\n      senderId\n      createdAt\n      updatedAt\n      deleted\n    }\n    createdBy\n    createdAt\n    lastMessage\n  }\n}",
+								"variables": "{\n  \"creatorId\": \"{{userId1}}\",\n  \"participantId\": \"{{userId2}}\",\n  \"initialMessage\": \"{{initialMessage}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_GetConversationsByUserId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains a list of conversations\", function(){",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.have.property(\"userConversations\");",
+									"    pm.expect(response.data.userConversations).to.be.an(\"array\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query GetUserConversations($userId: String!) {\n  userConversations(userId: $userId){\n    id\n    participants{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    messages{\n      id\n      content\n      senderId\n      createdAt\n      updatedAt\n      deleted\n    }\n    createdBy\n    createdAt\n    lastMessage\n  }\n}",
+								"variables": "{\n  \"userId\": \"{{userId1}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_GetConversationById",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Returned conversation ID matches ID given\", function (){",
+									"    const response = pm.response.json();",
+									"    const conversation = response.data.conversation;",
+									"",
+									"    pm.expect(conversation).to.have.property(\"id\");",
+									"    pm.expect(conversation.id).to.equal(pm.globals.get(\"createdConversationId\"));",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query getConversationById($conversationId: String!){\n  conversation(id: $conversationId){\n    id\n    participants{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    messages{\n      id\n      content\n      senderId\n      createdAt\n      updatedAt\n      deleted\n    }\n    createdBy\n    createdAt\n    lastMessage\n  }\n}",
+								"variables": "{\n    \"conversationId\" : \"{{createdConversationId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Messages",
+			"item": [
+				{
+					"name": "OK_getMessagesConversation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response contains a non-empty list of messages\", function(){",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.have.property(\"conversationMessages\");",
+									"    pm.expect(response.data.conversationMessages).to.be.an(\"array\");",
+									"    pm.expect(response.data.conversationMessages).to.have.lengthOf.at.least(1);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query GetConversationMessages($idConversation: String!){\n  conversationMessages(conversationId: $idConversation){\n    id\n    content\n    senderId\n    conversationId\n    createdAt\n    sender{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n  }\n}",
+								"variables": "{\n    \"idConversation\": \"{{createdConversationId}}\" \n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_CreateMessageConversation",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Message was sent correctly\", function(){",
+									"    const response = pm.response.json();",
+									"    const message = response.data.sendMessage;",
+									"",
+									"    pm.expect(message).to.have.property(\"id\");",
+									"    ",
+									"    pm.globals.set(\"sendMessageId\", message.id)",
+									"",
+									"    const messageDate = new Date(message.createdAt);",
+									"    const now = new Date();",
+									"    const timeDifference = now - messageDate;",
+									"    ",
+									"    // Check if message was sent within the last 5 minutes (300000 ms)",
+									"    pm.expect(timeDifference).to.be.below(300000);",
+									"});",
+									"",
+									"pm.test(\"Message was sent into the right conversation\", function(){",
+									"    const response = pm.response.json();",
+									"    const message = response.data.sendMessage;",
+									"",
+									"    pm.expect(message).to.have.property(\"conversationId\");",
+									"    pm.expect(message.conversationId).to.equal(pm.globals.get(\"createdConversationId\"));",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const messageToSend = \"ceci est un message test\";",
+									"pm.globals.set(\"messageToSend\", messageToSend);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation sendMessage($content: String!, $conversationId: String!, $senderId: String!){\n  sendMessage(\n    input: {\n      content: $content,\n      conversationId: $conversationId,\n      senderId: $senderId\n    }\n  ){\n    id\n    content\n    conversationId\n    createdAt\n    sender{\n      id\n      username\n      email\n      createdAt\n      updatedAt\n      deleted\n    }\n    conversation{\n      id\n      participants{\n        username\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"content\": \"{{messageToSend}}\",\n  \"conversationId\": \"{{createdConversationId}}\",\n  \"senderId\": \"{{userId1}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_UpdateMessage",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const newContent = \"le contenu du message a été édité\";",
+									"pm.globals.set(\"newContent\", newContent);",
+									"",
+									"",
+									"function getConversationMessages(conversationId, callback) {",
+									"    const query = `",
+									"        query GetConversationMessages($idConversation: String!) {",
+									"            conversationMessages(conversationId: $idConversation) {",
+									"                id",
+									"                content",
+									"                senderId",
+									"                conversationId",
+									"                createdAt",
+									"                sender {",
+									"                    id",
+									"                    username",
+									"                    email",
+									"                    createdAt",
+									"                    updatedAt",
+									"                    deleted",
+									"                }",
+									"            }",
+									"        }",
+									"    `;",
+									"",
+									"    const variables = {",
+									"        \"idConversation\": conversationId",
+									"    };",
+									"",
+									"    pm.sendRequest({",
+									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\" || \"http://localhost:3000/graphql\",",
+									"        method: 'POST',",
+									"        header: {",
+									"            'Content-Type': 'application/json',",
+									"        },",
+									"        body: {",
+									"            mode: 'raw',",
+									"            raw: JSON.stringify({",
+									"                query: query,",
+									"                variables: variables",
+									"            })",
+									"        }",
+									"    }, callback);",
+									"}",
+									"",
+									"const conversationId = pm.globals.get(\"createdConversationId\");",
+									"",
+									"if (!conversationId) {",
+									"    console.log(\"Error: No createdConversationId found in globals\");",
+									"    console.log(\"Available globals:\", Object.keys(pm.globals.toObject()));",
+									"    return;",
+									"}",
+									"",
+									"console.log(\"Fetching messages for conversation:\", conversationId);",
+									"",
+									"getConversationMessages(conversationId, function (err, response) {",
+									"    if (err) {",
+									"        return;",
+									"    }",
+									"    ",
+									"    if (response.code !== 200) {",
+									"        return;",
+									"    }",
+									"    ",
+									"    try {",
+									"        const responseData = response.json();",
+									"        ",
+									"        if (responseData.errors) {",
+									"            console.log(\"GraphQL errors:\", JSON.stringify(responseData.errors, null, 2));",
+									"            return;",
+									"        }",
+									"        ",
+									"        if (!responseData.data || !responseData.data.conversationMessages) {",
+									"            console.log(\"No conversation messages found in response\");",
+									"            console.log(\"Response data:\", JSON.stringify(responseData, null, 2));",
+									"            return;",
+									"        }",
+									"        ",
+									"        const messages = responseData.data.conversationMessages;",
+									"        console.log(`Found ${messages.length} messages in conversation`);",
+									"        ",
+									"        pm.globals.set(\"conversationMessages\", JSON.stringify(messages));",
+									"",
+									"        if (messages.length > 0) {",
+									"            const firstMessage = messages[0];",
+									"            const lastMessage = messages[messages.length - 1];",
+									"            ",
+									"            pm.globals.set(\"firstMessageId\", firstMessage.id);",
+									"            pm.globals.set(\"firstMessageContent\", firstMessage.content);",
+									"            pm.globals.set(\"firstMessageSenderId\", firstMessage.senderId);",
+									"            ",
+									"            pm.globals.set(\"lastMessageId\", lastMessage.id);",
+									"            pm.globals.set(\"lastMessageContent\", lastMessage.content);",
+									"        ",
+									"            ",
+									"        }",
+									"        ",
+									"        pm.globals.set(\"messageCount\", messages.length.toString());",
+									"        ",
+									"    } catch (parseError) {",
+									"        console.log(\"Error parsing response JSON:\", parseError);",
+									"        console.log(\"Raw response:\", response.text());",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Message has been updated\", function (){",
+									"    const response = pm.response.json();",
+									"    const editMessage = response.data.editMessage;",
+									"",
+									"    pm.expect(editMessage.id).to.equal(pm.globals.get(\"lastMessageId\"))",
+									"    pm.expect(editMessage.content).to.equal(pm.globals.get(\"newContent\"))",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation editMessage($userId: String! ,$messageId: String!, $newContent: String!){\n  editMessage(\n    userId: $userId,\n    input: {\n      messageId: $messageId,\n      newContent: $newContent\n    }\n  ){\n    id\n    content\n    createdAt\n  }\n}",
+								"variables": "{\n    \"userId\": \"{{userId1}}\",\n    \"newContent\": \"{{newContent}}\",\n    \"messageId\": \"{{lastMessageId}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OK_DeleteMessage",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function (){",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Check if deleteMessage is present in response\", function () {",
+									"    const response = pm.response.json();",
+									"    pm.expect(response.data).to.have.property('deleteMessage');",
+									"    pm.expect(response.data.deleteMessage).to.not.be.null;",
+									"});",
+									"",
+									"pm.test(\"Check if deleted field is a valid date\", function () {",
+									"    const response = pm.response.json();",
+									"    const deletedMessage = response.data.deleteMessage;",
+									"    ",
+									"    pm.expect(deletedMessage).to.have.property('deleted');",
+									"    pm.expect(deletedMessage.deleted).to.not.be.null;",
+									"    ",
+									"    const deletedDate = new Date(deletedMessage.deleted);",
+									"    pm.expect(deletedDate).to.be.instanceOf(Date);",
+									"    pm.expect(deletedDate.toString()).to.not.equal('Invalid Date');",
+									"    ",
+									"    const isoRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}Z$/;",
+									"    pm.expect(deletedMessage.deleted).to.match(isoRegex);",
+									"});",
+									"",
+									"pm.test(\"Check if deletion timestamp is recent\", function () {",
+									"    const response = pm.response.json();",
+									"    const deletedMessage = response.data.deleteMessage;",
+									"    ",
+									"    const deletedDate = new Date(deletedMessage.deleted);",
+									"    const now = new Date();",
+									"    const timeDifference = now - deletedDate;",
+									"    ",
+									"    // Check if deletion happened within the last 5 minutes (300000 ms)",
+									"    pm.expect(timeDifference).to.be.below(300000);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "mutation DeleteMessage($messageId: String!, $userId: String!){\n  deleteMessage(\n    messageId: $messageId,\n    userId: $userId\n  ){\n    id\n    content\n    conversationId\n    createdAt\n    senderId\n    deleted\n    updatedAt\n  }\n}",
+								"variables": "{\n  \"messageId\": \"{{lastMessageId}}\",\n  \"userId\": \"{{userId1}}\"\n}"
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/graphql",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
