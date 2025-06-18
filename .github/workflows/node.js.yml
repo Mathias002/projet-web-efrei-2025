@@ -76,10 +76,8 @@ jobs:
 
     - name: Create .env file
       run: |
-        pwd
-        ls -a
         echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > .env
-        ls -a
+        cat .env
       working-directory: nestjs
 
 
