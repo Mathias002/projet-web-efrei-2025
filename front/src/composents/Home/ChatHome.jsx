@@ -43,14 +43,14 @@ function ChatHome({ currentUser, onLogout }) {
           <h5>Conversations</h5>
         </div>
 
-        {/* Liste des conversations */}
-        <div className="flex-grow-1 overflow-auto px-3">
-          <ConversationList
-            userId={userId} // à remplacer plus tard par l’ID dynamique du user connecté
-            selectedId={selectedConvId}
-            onSelect={setSelectedConvId}
-          />
-        </div>
+          {/* Liste des conversations */}
+          <div className="flex-grow-1 overflow-auto px-3">
+            <ConversationList
+              userId={userId} // à remplacer plus tard par l’ID dynamique du user connecté
+              selectedId={selectedConvId}
+              onSelect={setSelectedConvId}
+            />
+          </div>
 
         {/* Boutons en bas */}
         <div className="p-3 border-top">
@@ -99,18 +99,18 @@ function ChatHome({ currentUser, onLogout }) {
       </div> */}
       </div>
 
-      {/* Modal pour créer une conversation */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Créer une nouvelle conversation</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <CreateConversation
-            creatorId={userId}
-            onCreated={handleNewConversation}
-          />
-        </Modal.Body>
-      </Modal>
+        {/* Modal pour créer une conversation */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Créer une nouvelle conversation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <CreateConversation
+              creatorId={userId}
+              onCreated={handleNewConversation}
+            />
+          </Modal.Body>
+        </Modal>
 
       {/* Modal pour modifier les informations */}
       <Modal show={showEditUserModal} onHide={() => setShowEditUserModal(false)} centered>
