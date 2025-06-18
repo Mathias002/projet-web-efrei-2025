@@ -40,7 +40,9 @@ jobs:
         cache-dependency-path: './nestjs/package.json'
 
     - name: Install dependencies
-      run: npm ci
+      run: |
+        ls 
+        npm i
       working-directory: ./nestjs
 
     - name: Generate Prisma Client
