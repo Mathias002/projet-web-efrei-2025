@@ -1,32 +1,130 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest      
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: dbchat
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics check_port_connectivity"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20' 
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './nestjs/package.json'
 
-      - name: Install dependencies
-        run: npm i
-        working-directory: nestjs
+    - name: Install dependencies
+      run: npm i
+      working-directory: ./nestjs
 
-      - name: Build NestJS app
-        run: npm run build
-        working-directory: nestjs
+    - name: Generate Prisma Client
+      run: npx prisma generate
+      working-directory: ./nestjs
 
+    - name: Run database migrations
+      run: npx prisma migrate deploy
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+
+    - name: Seed database (optional)
+      run: npx prisma db seed
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+      continue-on-error: true
+
+
+    - name: Debug ENV var
+      run: echo "JWT_SECRET is $JWT_SECRET"
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+
+    - name: Create .env file
+      run: |
+        echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > .env
+        echo 'DATABASE_URL="postgresql://admin:admin123@localhost:5432/dbchat"' > nestjs/.env
+        ls
+      working-directory: nestjs
+
+
+    - name: Run nestJs project for Newman tests
+      env:
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: npm run start:dev
+      working-directory: ./nestjs
+
+    - name: Run Newman tests
+      run: newman run ProjetWebQueries.postman_collection.json -e ProjetWebQueries.postman_collection.json
+      working-directory: ./nestjs
+
+
+
+
+    - name: Run unit tests
+      run: npm run test
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+        NODE_ENV: test
+      continue-on-error: true
+
+    - name: Run e2e tests
+      run: npm run test:e2e
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+        NODE_ENV: test
+      continue-on-error: true
+
+    - name: Run test coverage
+      run: npm run test:cov
+      working-directory: ./nestjs
+      env:
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dbchat
+        NODE_ENV: test
+      continue-on-error: true
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+      continue-on-error: true
+
+    
