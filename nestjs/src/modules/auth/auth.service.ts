@@ -35,6 +35,7 @@ export class AuthService {
   async register(username: string, email: string, password: string) {
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await this.userService.findByEmail(email);
+    
     if (existingUser) {
       throw new UnauthorizedException('Un utilisateur avec cet email existe déjà');
     }

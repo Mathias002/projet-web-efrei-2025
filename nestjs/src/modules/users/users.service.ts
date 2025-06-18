@@ -38,10 +38,13 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { email },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+        deleted: null,
+      },
     });
-    
+
     // Retourne null si pas trouvé, sans lancer d'erreur
     return user ? mapUser(user) : null;
   }
@@ -82,8 +85,21 @@ export class UsersService {
       }
     });
 
-    if (existing) {
+    console.log(existing);
+
+    if (existing && !existing.deleted) {
       throw new Error('A user with the same email adress already exists.');
+    }
+
+    if (existing) {
+      return this.prisma.user.update({
+        where: { id: existing.id },
+        data: {
+          username: input.username,
+          password: input.password,
+          deleted: null
+        },
+      });
     }
 
     return this.prisma.user.create({
@@ -91,7 +107,8 @@ export class UsersService {
         username: input.username,
         email: input.email,
         password: input.password,
-      }, });
+      },
+    });
   }
 
   async editUser(userId: string, input: EditUserInput) {

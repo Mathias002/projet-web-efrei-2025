@@ -18,7 +18,7 @@ function App() {
         if (decoded.exp && decoded.exp < now) {
           localStorage.removeItem('token');
         } else {
-          setCurrentUser({ id: decoded.sub, email: decoded.email });
+          setCurrentUser({ id: decoded.sub, email: decoded.email, username: decoded.username });
         }
       } catch (e) {
         console.error("Invalid token", e);

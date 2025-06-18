@@ -27,8 +27,8 @@ export default function EditUserForm({ user, onSave, onClose = () => { } }) {
   // charge les données utilisateur à l'ouverture
   useEffect(() => {
     if (user) {
-      setUsername(user.username || '');
-      setEmail(user.email || '');
+      setUsername(user.username );
+      setEmail(user.email);
     }
   }, [user]);
 
