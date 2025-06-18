@@ -58,7 +58,7 @@ describe('UsersService', () => {
     it('should throw if user not found', async () => {
       prisma.user.findUnique.mockResolvedValueOnce(null);
 
-      await expect(service.findById('missing')).rejects.toThrow('Sorry impossible to find this user.');
+      await expect(service.findById('missing')).rejects.toThrow('Sorry, impossible to find this user.');
     });
   });
 
@@ -79,7 +79,7 @@ describe('UsersService', () => {
       prisma.user.findMany.mockResolvedValueOnce([{ id: '1' }]); // only 1 found
 
       await expect(service.findByIds(['1', '2'])).rejects.toThrow(
-        'Sorry impossible to find some of these users. Please try again.',
+        'Sorry, impossible to find some of these users. Please try again.',
       );
     });
   });
@@ -88,6 +88,7 @@ describe('UsersService', () => {
     const input: CreateUserInput = {
       username: 'Charlie',
       email: 'charlie@test.com',
+      password: 'password',
     };
 
     it('should create a user if email does not exist', async () => {
@@ -104,6 +105,7 @@ describe('UsersService', () => {
         data: {
           username: input.username,
           email: input.email,
+          password: input.password
         },
       });
     });
@@ -112,7 +114,7 @@ describe('UsersService', () => {
       prisma.user.findFirst.mockResolvedValueOnce({ id: 'existingId' });
 
       await expect(service.createUser(input)).rejects.toThrow(
-        'A user with the same email adress already exist.',
+        'A user with the same email adress already exists.',
       );
     });
   });
@@ -149,7 +151,7 @@ describe('UsersService', () => {
       prisma.user.findFirst.mockResolvedValueOnce(null);
 
       await expect(service.editUser('missing', input)).rejects.toThrow(
-        'Sorry impossible to find this user.',
+        'Sorry, impossible to find this user.',
       );
     });
 
@@ -159,7 +161,7 @@ describe('UsersService', () => {
         .mockResolvedValueOnce({ id: '2' }); // existing email used
 
       await expect(service.editUser('1', input)).rejects.toThrow(
-        'A user with the same email adress already exist.',
+        'A user with the same email adress already exists.',
       );
     });
   });
@@ -182,7 +184,7 @@ describe('UsersService', () => {
       prisma.user.findFirst.mockResolvedValueOnce(null);
 
       await expect(service.deleteUser('missing')).rejects.toThrow(
-        'Sorry impossible to find this user.',
+        'Sorry, impossible to find this user.',
       );
     });
   });

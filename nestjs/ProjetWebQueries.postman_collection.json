@@ -29,7 +29,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/health",
+							"raw": "{{base_url}}/health",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -114,7 +114,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -160,7 +160,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -222,7 +222,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -283,7 +283,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -356,7 +356,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -383,7 +383,7 @@
 								"exec": [
 									"const initialMessage = \"Salut, c'est un test !\";",
 									"pm.globals.set(\"initialMessage\", initialMessage);",
-									"pm.environment.set(\"baseUrl\", \"http://localhost:3000\");",
+									"pm.environment.set(\"baseUrl\", \"{{base_url}}\");",
 									"function createUser(username, email, callback) {",
 									"    pm.sendRequest({",
 									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\",",
@@ -502,7 +502,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -558,7 +558,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -606,7 +606,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -658,7 +658,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -733,7 +733,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -783,7 +783,7 @@
 									"    };",
 									"",
 									"    pm.sendRequest({",
-									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\" || \"http://localhost:3000/graphql\",",
+									"        url: pm.environment.get(\"baseUrl\") + \"/graphql\" || \"{{base_url}}/graphql\",",
 									"        method: 'POST',",
 									"        header: {",
 									"            'Content-Type': 'application/json',",
@@ -895,7 +895,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -968,7 +968,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/graphql",
+							"raw": "{{base_url}}/graphql",
 							"protocol": "http",
 							"host": [
 								"localhost"

@@ -118,6 +118,7 @@ describe('ConversationsService', () => {
     const input: CreateConversationInput = {
       participantId: 'user2',
       initialMessage: 'Hello!',
+      nom: 'conversation'
     };
 
     it('should throw error if creator or participant not found', async () => {
