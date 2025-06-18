@@ -12,6 +12,7 @@ function ChatHome({ currentUser, onLogout }) {
   const [selectedConvId, setSelectedConvId] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [user, setUser] = useState(currentUser);
 
   const token = localStorage.getItem('token');
 
@@ -19,15 +20,15 @@ function ChatHome({ currentUser, onLogout }) {
 
   const userId = decoded.sub;
 
-  // Callback quand une nouvelle conversation est créée
+  // callback quand une nouvelle conversation est créée
   const handleNewConversation = (newConv) => {
     setShowModal(false); // ferme la popup
     setSelectedConvId(newConv.id); // sélectionne directement la nouvelle conversation
   };
 
-  // ferme la popup après sauvegarde
-  const handleSaveUser = () => {
-    setShowEditUserModal(false);
+  // enregistre les nouvelles données
+  const handleSaveUser = (updatedUser) => {
+    setUser(updatedUser);
   }
 
   const handleLogout = () => {
@@ -40,7 +41,7 @@ function ChatHome({ currentUser, onLogout }) {
       {/* Sidebar gauche */}
       <div className="d-flex flex-column border-end bg-light" style={{ width: '350px' }}>
         <div className="p-3 border-bottom">
-          <h5>Conversations de { currentUser.username }</h5>
+          <h5>Conversations de { user.username }</h5>
         </div>
 
           {/* Liste des conversations */}
@@ -98,12 +99,12 @@ function ChatHome({ currentUser, onLogout }) {
         </Modal.Header>
         <Modal.Body>
           <EditUserForm
-            user={currentUser}
+            user={user}
             onSave={handleSaveUser}
             onClose={() => setShowEditUserModal(false)}
           />
           <DeleteUser
-            userId={currentUser.id}
+            userId={user.id}
             onDeleted={() => {
               alert('Utilisateur supprimé !');
               onLogout();
